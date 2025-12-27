@@ -18,18 +18,18 @@ namespace KYS.NET.BL.Services
     /// <param name="pw"></param>
     /// <returns></returns>
     //  Tuple 리턴
-    public (bool IsSuccess, string Message) Login(string id, string pw)
+    public (bool IsSuccess, string? userid, string? usernm, string Message) Login(string id, string pw)
     {
       if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(pw))
-        return (false, "아이디와 비밀번호를 입력해주세요.");
+        return (false, "", "", "아이디와 비밀번호를 입력해주세요.");
 
       // DATA 계층의 프로시저 실행 메서드 호출
-      bool isValid = _userRepo.CheckLogin(id, pw);
+      (bool isValid, string? userid, string? usernm) = _userRepo.CheckLogin(id, pw);
 
       if (isValid)
-        return (true, "로그인 성공!");
+        return (true, userid, usernm, "로그인 성공!");
       else
-        return (false, "아이디 또는 비밀번호가 틀렸습니다.");
+        return (false, "", "", "아이디 또는 비밀번호가 틀렸습니다.");
     }
   }
 }

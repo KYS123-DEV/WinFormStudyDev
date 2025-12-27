@@ -1,4 +1,5 @@
-﻿using KYS.NET.BL.Services;
+﻿using KYS.NET.BL.Common;
+using KYS.NET.BL.Services;
 using KYS.NET.STUDY.Forms.Approval;
 using KYS.NET.STUDY.Utils;
 
@@ -34,9 +35,15 @@ namespace KYS.NET.STUDY
           //MsgHelper.ShowInfo(result.Message);
           DialogResult = DialogResult.OK;
 
-          // 현재 사용자 정보를 어딘가 저장하고 싶다면 (선택사항)
-          // SessionInfo.UserId = txtb_id.Text;
+          // 2. 현재 사용자 정보를 저장
+          SessionManager.Login(new SessionInfo
+          {
+            UserId = result.userid!,
+            UserName = result.usernm!
+          });
 
+          //메인 작업 폼 Open
+          ApprovalRequestForm approvalForm = new();
           Close();
           //this.Hide();
         }

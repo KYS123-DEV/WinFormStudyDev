@@ -28,7 +28,7 @@ namespace KYS.NET.DATA.Entities
     /// <param name="userId"></param>
     /// <param name="pwd"></param>
     /// <returns></returns>
-    public bool CheckLogin(string userId, string pwd)
+    public (bool isValid, string? userid, string? usernm) CheckLogin(string userId, string pwd)
     {
       using (SqlConnection conn = new (_connstr))
       {
@@ -42,23 +42,23 @@ namespace KYS.NET.DATA.Entities
           cmd.Parameters.AddWithValue("@p_id", userId);
           cmd.Parameters.AddWithValue("@p_pwd", pwd);
 
-          var returnParam = new SqlParameter
-          {
-            ParameterName = "@return_value",
-            SqlDbType = SqlDbType.SmallInt, // 프로시저의 @result 타입과 맞춤
-            Direction = ParameterDirection.ReturnValue
-          };
-          cmd.Parameters.Add(returnParam);
-
           //3. 실행 - 에러 처리 필요
-          cmd.ExecuteNonQuery();
+          var sdr = cmd.ExecuteReader();
 
-          //4. 결과 확인
-          int result = Convert.ToInt32(returnParam.Value);
+          int result = 0;
+          string? userid = string.Empty;
+          string? usernm = string.Empty;
+
+          if (sdr.Read())
+          {
+            result = Convert.ToInt32(sdr["result"]);
+            userid = sdr["userid"].ToString();
+            usernm = sdr["usernm"].ToString();
+          }
 
           // true : 로그인 성공
           // false : 로그인 실패
-          return result > 0 ? true : false;
+          return (result > 0, userid, usernm);
         }
       }
     }

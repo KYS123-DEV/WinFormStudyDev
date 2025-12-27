@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KYS.NET.BL.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,14 +13,13 @@ namespace KYS.NET.STUDY.Forms.Approval
 {
   public partial class ApprovalRequestForm : Form
   {
-    private readonly string _loginId;
-    private readonly string _loginName;
     public ApprovalRequestForm()
     {
       InitializeComponent();
-      //_loginId = userId;
+
       // 화면 상단 라벨에 사용자 정보 표시
-      //lbl_welcome.Text = $"Logged in as: {_loginId}";
+      lbl_welcome.Text = $"Logged in as: {SessionManager.CurrentSession?.UserId} ";
+      lbl_welcome.Text += $"({SessionManager.CurrentSession?.UserName})";
     }
 
     /// <summary>
