@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using KYS.NET.DATA.Common;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -15,11 +16,7 @@ namespace KYS.NET.DATA.Entities
     private readonly string? _connstr;
     public UserRepository() {
       //설정 빌더 구성
-      var config = new ConfigurationBuilder()
-          .SetBasePath(Directory.GetCurrentDirectory())
-          .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-          .Build();
-      _connstr = config.GetConnectionString("DBConnection_1");
+      _connstr = DBConnectionObject.GetConnstr();
     }
 
     /// <summary>
