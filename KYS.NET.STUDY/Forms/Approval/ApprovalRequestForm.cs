@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static CodeService;
 
 namespace KYS.NET.STUDY.Forms.Approval
 {
@@ -36,13 +35,19 @@ namespace KYS.NET.STUDY.Forms.Approval
       //조회 combobox 컨트롤 setting
       try
       {
-        cb_dt.DataSource = new CodeService().GetItems("101", "1");
+        CodeService cs = new();
+
+        cb_dt.DataSource = cs.GetItems("101", "1");
         cb_dt.DisplayMember = "CodeNm";
         cb_dt.ValueMember = "Code";
 
-        cb_search.DataSource = new CodeService().GetItems("101", "2");
+        cb_search.DataSource = cs.GetItems("101", "2");
         cb_search.DisplayMember = "CodeNm";
         cb_search.ValueMember = "Code";
+
+        cb_docdiv.DataSource = cs.GetItems("110", "");
+        cb_docdiv.DisplayMember = "CodeNm";
+        cb_docdiv.ValueMember = "Code";
       }
       catch (Exception ex)
       {
@@ -58,6 +63,16 @@ namespace KYS.NET.STUDY.Forms.Approval
     private void btn_logout_Click(object sender, EventArgs e)
     {
       Application.Exit();
+    }
+
+    /// <summary>
+    /// 문서 저장 (CRUD - Create)
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void btn_save_Click(object sender, EventArgs e)
+    {
+
     }
   }
 }

@@ -1,4 +1,4 @@
-﻿using KYS.NET.DATA.Entities;
+﻿using KYS.NET.DATA.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,6 @@ namespace KYS.NET.BL.Services
     /// <param name="id"></param>
     /// <param name="pw"></param>
     /// <returns></returns>
-    //  Tuple 리턴
     public (bool IsSuccess, string? userid, string? usernm, string Message) Login(string id, string pw)
     {
       if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(pw))

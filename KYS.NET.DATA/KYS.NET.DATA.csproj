@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\KYS.NET.MODELS\KYS.NET.MODELS.csproj" />
+  </ItemGroup>
+
 </Project>

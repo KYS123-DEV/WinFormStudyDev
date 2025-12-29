@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KYS.NET.DATA.Entities
+namespace KYS.NET.DATA.Repositories
 {
   public class UserRepository
   {

@@ -46,7 +46,6 @@ namespace KYS.NET.STUDY
           //메인 작업 폼 Open
           ApprovalRequestForm approvalForm = new();
           Close();
-          //this.Hide();
         }
         else
         {

@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\KYS.NET.DATA\KYS.NET.DATA.csproj" />
-    <ProjectReference Include="..\KYS.NET.MODELS\KYS.NET.MODELS.csproj" />
-  </ItemGroup>
-
 </Project>

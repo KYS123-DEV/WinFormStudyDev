@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KYS.NET.BL\KYS.NET.BL.csproj" />
+    <ProjectReference Include="..\KYS.NET.MODELS\KYS.NET.MODELS.csproj" />
   </ItemGroup>
 
 </Project>

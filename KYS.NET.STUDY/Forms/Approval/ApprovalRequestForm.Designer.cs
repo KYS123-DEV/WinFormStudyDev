@@ -46,6 +46,21 @@
       cb_search = new ComboBox();
       txtb_search = new TextBox();
       lv_approval = new ListView();
+      lbl_enrolldt = new Label();
+      txtb_enrolldt = new TextBox();
+      cb_docdiv = new ComboBox();
+      lbl_docdiv = new Label();
+      lbl_doctitle = new Label();
+      txtb_doctitle = new TextBox();
+      txtb_doccontent = new RichTextBox();
+      lbl_doccontent = new Label();
+      lbl_docfilenm = new Label();
+      txtb_docfilenm = new TextBox();
+      btn_fileupload = new Button();
+      lbl_updatedt = new Label();
+      txtb_updatedt = new TextBox();
+      lbl_comment = new Label();
+      txtb_comment = new RichTextBox();
       gb_info.SuspendLayout();
       gb_utils.SuspendLayout();
       SuspendLayout();
@@ -58,7 +73,7 @@
       gb_info.Controls.Add(lbl_welcome);
       gb_info.Location = new Point(11, 22);
       gb_info.Name = "gb_info";
-      gb_info.Size = new Size(1160, 63);
+      gb_info.Size = new Size(1228, 63);
       gb_info.TabIndex = 0;
       gb_info.TabStop = false;
       gb_info.Text = "Info";
@@ -66,7 +81,7 @@
       // btn_logout
       // 
       btn_logout.Font = new Font("굴림체", 9F, FontStyle.Regular, GraphicsUnit.Point, 129);
-      btn_logout.Location = new Point(1024, 22);
+      btn_logout.Location = new Point(1092, 22);
       btn_logout.Name = "btn_logout";
       btn_logout.Size = new Size(130, 33);
       btn_logout.TabIndex = 0;
@@ -103,6 +118,7 @@
       btn_save.TabIndex = 0;
       btn_save.Text = "저장(↓)";
       btn_save.UseVisualStyleBackColor = true;
+      btn_save.Click += btn_save_Click;
       // 
       // btn_delete
       // 
@@ -155,7 +171,7 @@
       txtb_title2.Location = new Point(541, 280);
       txtb_title2.Name = "txtb_title2";
       txtb_title2.ReadOnly = true;
-      txtb_title2.Size = new Size(630, 50);
+      txtb_title2.Size = new Size(698, 50);
       txtb_title2.TabIndex = 8;
       txtb_title2.Text = "결재서 작성";
       txtb_title2.TextAlign = HorizontalAlignment.Center;
@@ -190,7 +206,7 @@
       gb_utils.Controls.Add(btn_retrieve);
       gb_utils.Location = new Point(11, 90);
       gb_utils.Name = "gb_utils";
-      gb_utils.Size = new Size(1160, 72);
+      gb_utils.Size = new Size(1228, 72);
       gb_utils.TabIndex = 2;
       gb_utils.TabStop = false;
       gb_utils.Text = "Utils";
@@ -208,6 +224,7 @@
       // 
       cb_dt.BackColor = SystemColors.Info;
       cb_dt.DropDownStyle = ComboBoxStyle.DropDownList;
+      cb_dt.ForeColor = Color.Black;
       cb_dt.FormattingEnabled = true;
       cb_dt.Location = new Point(11, 180);
       cb_dt.Name = "cb_dt";
@@ -220,6 +237,7 @@
       // 
       cb_search.BackColor = SystemColors.Info;
       cb_search.DropDownStyle = ComboBoxStyle.DropDownList;
+      cb_search.ForeColor = Color.Black;
       cb_search.FormattingEnabled = true;
       cb_search.Location = new Point(11, 218);
       cb_search.Name = "cb_search";
@@ -229,6 +247,7 @@
       // 
       // txtb_search
       // 
+      txtb_search.ForeColor = Color.Black;
       txtb_search.Location = new Point(169, 222);
       txtb_search.Name = "txtb_search";
       txtb_search.Size = new Size(588, 31);
@@ -237,16 +256,200 @@
       // lv_approval
       // 
       lv_approval.Location = new Point(11, 338);
+      lv_approval.MultiSelect = false;
       lv_approval.Name = "lv_approval";
       lv_approval.Size = new Size(524, 891);
       lv_approval.TabIndex = 13;
       lv_approval.UseCompatibleStateImageBehavior = false;
       // 
+      // lbl_enrolldt
+      // 
+      lbl_enrolldt.AutoSize = true;
+      lbl_enrolldt.Font = new Font("굴림체", 10F, FontStyle.Bold);
+      lbl_enrolldt.ForeColor = Color.Black;
+      lbl_enrolldt.Location = new Point(546, 348);
+      lbl_enrolldt.Name = "lbl_enrolldt";
+      lbl_enrolldt.Size = new Size(115, 20);
+      lbl_enrolldt.TabIndex = 14;
+      lbl_enrolldt.Text = "접수일자 :";
+      // 
+      // txtb_enrolldt
+      // 
+      txtb_enrolldt.BackColor = SystemColors.ScrollBar;
+      txtb_enrolldt.Font = new Font("굴림체", 10F);
+      txtb_enrolldt.ForeColor = Color.Black;
+      txtb_enrolldt.Location = new Point(673, 344);
+      txtb_enrolldt.Name = "txtb_enrolldt";
+      txtb_enrolldt.ReadOnly = true;
+      txtb_enrolldt.Size = new Size(239, 30);
+      txtb_enrolldt.TabIndex = 15;
+      // 
+      // cb_docdiv
+      // 
+      cb_docdiv.BackColor = SystemColors.Info;
+      cb_docdiv.DropDownStyle = ComboBoxStyle.DropDownList;
+      cb_docdiv.Font = new Font("굴림체", 10F);
+      cb_docdiv.ForeColor = Color.Black;
+      cb_docdiv.FormattingEnabled = true;
+      cb_docdiv.Location = new Point(673, 397);
+      cb_docdiv.Name = "cb_docdiv";
+      cb_docdiv.Size = new Size(239, 28);
+      cb_docdiv.Sorted = true;
+      cb_docdiv.TabIndex = 16;
+      cb_docdiv.TabStop = false;
+      // 
+      // lbl_docdiv
+      // 
+      lbl_docdiv.AutoSize = true;
+      lbl_docdiv.Font = new Font("굴림체", 10F, FontStyle.Bold);
+      lbl_docdiv.ForeColor = Color.Black;
+      lbl_docdiv.Location = new Point(546, 400);
+      lbl_docdiv.Name = "lbl_docdiv";
+      lbl_docdiv.Size = new Size(115, 20);
+      lbl_docdiv.TabIndex = 17;
+      lbl_docdiv.Text = "문서구분 :";
+      // 
+      // lbl_doctitle
+      // 
+      lbl_doctitle.AutoSize = true;
+      lbl_doctitle.Font = new Font("굴림체", 10F, FontStyle.Bold);
+      lbl_doctitle.ForeColor = Color.Black;
+      lbl_doctitle.Location = new Point(546, 452);
+      lbl_doctitle.Name = "lbl_doctitle";
+      lbl_doctitle.Size = new Size(115, 20);
+      lbl_doctitle.TabIndex = 18;
+      lbl_doctitle.Text = "문서제목 :";
+      // 
+      // txtb_doctitle
+      // 
+      txtb_doctitle.Font = new Font("굴림체", 10F);
+      txtb_doctitle.ForeColor = Color.Black;
+      txtb_doctitle.Location = new Point(673, 448);
+      txtb_doctitle.Name = "txtb_doctitle";
+      txtb_doctitle.Size = new Size(560, 30);
+      txtb_doctitle.TabIndex = 19;
+      // 
+      // txtb_doccontent
+      // 
+      txtb_doccontent.DetectUrls = false;
+      txtb_doccontent.Font = new Font("굴림체", 10F, FontStyle.Regular, GraphicsUnit.Point, 129);
+      txtb_doccontent.ForeColor = Color.Black;
+      txtb_doccontent.HideSelection = false;
+      txtb_doccontent.Location = new Point(673, 498);
+      txtb_doccontent.Name = "txtb_doccontent";
+      txtb_doccontent.Size = new Size(560, 410);
+      txtb_doccontent.TabIndex = 20;
+      txtb_doccontent.Text = "";
+      // 
+      // lbl_doccontent
+      // 
+      lbl_doccontent.AutoSize = true;
+      lbl_doccontent.Font = new Font("굴림체", 10F, FontStyle.Bold);
+      lbl_doccontent.ForeColor = Color.Black;
+      lbl_doccontent.Location = new Point(546, 503);
+      lbl_doccontent.Name = "lbl_doccontent";
+      lbl_doccontent.Size = new Size(115, 20);
+      lbl_doccontent.TabIndex = 21;
+      lbl_doccontent.Text = "문서내용 :";
+      // 
+      // lbl_docfilenm
+      // 
+      lbl_docfilenm.AutoSize = true;
+      lbl_docfilenm.Font = new Font("굴림체", 10F, FontStyle.Bold);
+      lbl_docfilenm.ForeColor = Color.Black;
+      lbl_docfilenm.Location = new Point(546, 929);
+      lbl_docfilenm.Name = "lbl_docfilenm";
+      lbl_docfilenm.Size = new Size(115, 20);
+      lbl_docfilenm.TabIndex = 22;
+      lbl_docfilenm.Text = "첨부파일 :";
+      // 
+      // txtb_docfilenm
+      // 
+      txtb_docfilenm.BackColor = SystemColors.ScrollBar;
+      txtb_docfilenm.Font = new Font("굴림체", 10F);
+      txtb_docfilenm.ForeColor = Color.Black;
+      txtb_docfilenm.Location = new Point(668, 925);
+      txtb_docfilenm.Name = "txtb_docfilenm";
+      txtb_docfilenm.ReadOnly = true;
+      txtb_docfilenm.Size = new Size(457, 30);
+      txtb_docfilenm.TabIndex = 23;
+      // 
+      // btn_fileupload
+      // 
+      btn_fileupload.Cursor = Cursors.Hand;
+      btn_fileupload.FlatAppearance.BorderSize = 2;
+      btn_fileupload.Location = new Point(1131, 923);
+      btn_fileupload.Name = "btn_fileupload";
+      btn_fileupload.Size = new Size(45, 34);
+      btn_fileupload.TabIndex = 25;
+      btn_fileupload.Text = "▲";
+      btn_fileupload.UseVisualStyleBackColor = true;
+      // 
+      // lbl_updatedt
+      // 
+      lbl_updatedt.AutoSize = true;
+      lbl_updatedt.Font = new Font("굴림체", 10F, FontStyle.Bold);
+      lbl_updatedt.ForeColor = Color.Black;
+      lbl_updatedt.Location = new Point(546, 975);
+      lbl_updatedt.Name = "lbl_updatedt";
+      lbl_updatedt.Size = new Size(126, 20);
+      lbl_updatedt.TabIndex = 26;
+      lbl_updatedt.Text = "수정일자 : ";
+      // 
+      // txtb_updatedt
+      // 
+      txtb_updatedt.BackColor = SystemColors.ScrollBar;
+      txtb_updatedt.Font = new Font("굴림체", 10F);
+      txtb_updatedt.ForeColor = Color.Black;
+      txtb_updatedt.Location = new Point(668, 971);
+      txtb_updatedt.Name = "txtb_updatedt";
+      txtb_updatedt.ReadOnly = true;
+      txtb_updatedt.Size = new Size(239, 30);
+      txtb_updatedt.TabIndex = 27;
+      // 
+      // lbl_comment
+      // 
+      lbl_comment.AutoSize = true;
+      lbl_comment.Font = new Font("굴림체", 10F, FontStyle.Bold);
+      lbl_comment.ForeColor = Color.Black;
+      lbl_comment.Location = new Point(546, 1021);
+      lbl_comment.Name = "lbl_comment";
+      lbl_comment.Size = new Size(119, 20);
+      lbl_comment.TabIndex = 28;
+      lbl_comment.Text = "Comment  :";
+      // 
+      // txtb_comment
+      // 
+      txtb_comment.BackColor = SystemColors.ScrollBar;
+      txtb_comment.Font = new Font("굴림체", 10F, FontStyle.Regular, GraphicsUnit.Point, 129);
+      txtb_comment.ForeColor = Color.Black;
+      txtb_comment.Location = new Point(668, 1021);
+      txtb_comment.Name = "txtb_comment";
+      txtb_comment.ReadOnly = true;
+      txtb_comment.Size = new Size(565, 208);
+      txtb_comment.TabIndex = 29;
+      txtb_comment.Text = "";
+      // 
       // ApprovalRequestForm
       // 
       AutoScaleDimensions = new SizeF(10F, 25F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(1184, 1240);
+      ClientSize = new Size(1251, 1240);
+      Controls.Add(txtb_comment);
+      Controls.Add(lbl_comment);
+      Controls.Add(txtb_updatedt);
+      Controls.Add(lbl_updatedt);
+      Controls.Add(btn_fileupload);
+      Controls.Add(txtb_docfilenm);
+      Controls.Add(lbl_docfilenm);
+      Controls.Add(lbl_doccontent);
+      Controls.Add(txtb_doccontent);
+      Controls.Add(txtb_doctitle);
+      Controls.Add(lbl_doctitle);
+      Controls.Add(lbl_docdiv);
+      Controls.Add(cb_docdiv);
+      Controls.Add(txtb_enrolldt);
+      Controls.Add(lbl_enrolldt);
       Controls.Add(lv_approval);
       Controls.Add(txtb_search);
       Controls.Add(cb_search);
@@ -289,5 +492,20 @@
     private ComboBox cb_search;
     private TextBox txtb_search;
     private ListView lv_approval;
+    private Label lbl_enrolldt;
+    private TextBox txtb_enrolldt;
+    private ComboBox cb_docdiv;
+    private Label lbl_docdiv;
+    private Label lbl_doctitle;
+    private TextBox txtb_doctitle;
+    private RichTextBox txtb_doccontent;
+    private Label lbl_doccontent;
+    private Label lbl_docfilenm;
+    private TextBox txtb_docfilenm;
+    private Button btn_fileupload;
+    private Label lbl_updatedt;
+    private TextBox txtb_updatedt;
+    private Label lbl_comment;
+    private RichTextBox txtb_comment;
   }
 }
