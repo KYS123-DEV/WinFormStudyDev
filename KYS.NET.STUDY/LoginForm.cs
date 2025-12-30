@@ -1,4 +1,5 @@
 ﻿using KYS.NET.BL.Common;
+using KYS.NET.BL.Interfaces;
 using KYS.NET.BL.Services;
 using KYS.NET.DATA.Common;
 using KYS.NET.STUDY.Forms.Approval;
@@ -8,14 +9,11 @@ namespace KYS.NET.STUDY
 {
   public partial class LoginForm : Form
   {
+    private readonly IUserService _auth;
     public LoginForm()
     {
       InitializeComponent();
-    }
-
-    private void LoginForm_Load(object sender, EventArgs e)
-    {
-
+      _auth = new UserService();
     }
 
     /// <summary>
@@ -27,13 +25,10 @@ namespace KYS.NET.STUDY
     {
       try
       {
-        AuthService auth = new();
-        var result = auth.Login(txtb_id.Text, txtb_pw.Text);
-
+        var result = _auth.Login(txtb_id.Text, txtb_pw.Text);
         if (result.IsSuccess)
         {
-          //로그인 성공
-          //MsgHelper.ShowInfo(result.Message);
+          //1. 로그인 성공
           DialogResult = DialogResult.OK;
 
           // 2. 현재 사용자 정보를 저장

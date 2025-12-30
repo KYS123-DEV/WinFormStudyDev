@@ -17,16 +17,16 @@ namespace KYS.NET.DATA.Repositories
 
   public class CodeRepository : IReadOnlyRepository<ComboItem>
   {
-    public readonly string? Connstr;
+    private readonly string? _Connstr;
     public CodeRepository()
     {
-      Connstr = DBConnectionObject.DBconnStr;
+      _Connstr = DBConnectionObject.GetConnstr();
     }
 
     public List<ComboItem> Select(string codekind, string kind)
     {
       List<ComboItem> items = new();
-      using (SqlConnection conn = new(Connstr))
+      using (SqlConnection conn = new(_Connstr))
       {
         // 데이터 조회 및 items 채우기
         conn.Open();

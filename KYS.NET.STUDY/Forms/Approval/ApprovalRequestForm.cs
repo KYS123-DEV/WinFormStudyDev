@@ -1,16 +1,5 @@
 ﻿using KYS.NET.BL.Common;
-using KYS.NET.DATA.Common;
 using KYS.NET.STUDY.Utils;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.Common;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace KYS.NET.STUDY.Forms.Approval
 {
@@ -22,7 +11,7 @@ namespace KYS.NET.STUDY.Forms.Approval
     }
 
     /// <summary>
-    /// Form Load 이벤트
+    /// 문서 작성 Form Load 이벤트
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -35,24 +24,21 @@ namespace KYS.NET.STUDY.Forms.Approval
       //조회 combobox 컨트롤 setting
       try
       {
-        CodeService cs = new();
-
-        cb_dt.DataSource = cs.GetItems("101", "1");
-        cb_dt.DisplayMember = "CodeNm";
-        cb_dt.ValueMember = "Code";
-
-        cb_search.DataSource = cs.GetItems("101", "2");
-        cb_search.DisplayMember = "CodeNm";
-        cb_search.ValueMember = "Code";
-
-        cb_docdiv.DataSource = cs.GetItems("110", "");
-        cb_docdiv.DisplayMember = "CodeNm";
-        cb_docdiv.ValueMember = "Code";
+        CodeBind(cb_dt, "101", "1");
+        CodeBind(cb_search, "101", "2");
+        CodeBind(cb_docdiv, "110", "");
       }
       catch (Exception ex)
       {
         MsgHelper.ShowError("[Combobox error] : " + ex.Message);
       }
+    }
+
+    public void CodeBind(ComboBox comboBox, string codekind, string kind)
+    {
+      comboBox.DataSource = new CodeService().GetItems(codekind, kind);
+      comboBox.DisplayMember = "CodeNm";
+      comboBox.ValueMember = "Code";
     }
 
     /// <summary>

@@ -1,13 +1,10 @@
-﻿using KYS.NET.DATA.Common;
-using KYS.NET.DATA.Repositories;
-using Microsoft.Data.SqlClient;
+﻿using KYS.NET.DATA.Repositories;
 
 public class CodeService
 {
-  private CodeRepository _codeRepo = new();
   public List<ComboItem> GetItems(string codekind, string kind)
   {
-    var list = _codeRepo.Select(codekind, kind);
+    var list = new CodeRepository().Select(codekind, kind);
     return list ?? new List<ComboItem>();
   }
 }

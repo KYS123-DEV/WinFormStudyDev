@@ -8,7 +8,7 @@ namespace KYS.NET.DATA.Interfaces
 {
   public interface IRepository<T> where T : class
   {
-    bool Create(T Model);
+    bool Insert(T Model);
     List<T> Select();
 
     //U,D 추가 예정

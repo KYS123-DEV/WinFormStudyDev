@@ -11,12 +11,14 @@ namespace KYS.NET.STUDY
 
       using (LoginForm login = new LoginForm())
       {
-        if (login.ShowDialog() == DialogResult.OK)
+        switch (login.ShowDialog())
         {
-          Application.Run(new ApprovalRequestForm());
-        } else
-        {
-          Application.Exit();
+          case DialogResult.OK:
+            Application.Run(new ApprovalRequestForm());
+            break;
+          default:
+            Application.Exit();
+            break;
         }
       }
     }

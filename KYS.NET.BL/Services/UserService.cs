@@ -1,4 +1,6 @@
-﻿using KYS.NET.DATA.Repositories;
+﻿using KYS.NET.BL.Interfaces;
+using KYS.NET.DATA.Interfaces;
+using KYS.NET.DATA.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +9,14 @@ using System.Threading.Tasks;
 
 namespace KYS.NET.BL.Services
 {
-  public class AuthService
+  public class UserService : IUserService
   {
-    private UserRepository _userRepo = new UserRepository();
+    private readonly IUserRepository _user;
+
+    public UserService()
+    {
+      _user = new UserRepository();
+    }
 
     /// <summary>
     /// 로그인 확인
@@ -23,7 +30,7 @@ namespace KYS.NET.BL.Services
         return (false, "", "", "아이디와 비밀번호를 입력해주세요.");
 
       // DATA 계층의 프로시저 실행 메서드 호출
-      (bool isValid, string? userid, string? usernm) = _userRepo.CheckLogin(id, pw);
+      (bool isValid, string? userid, string? usernm) = _user.Login(id, pw);
 
       if (isValid)
         return (true, userid, usernm, "로그인 성공!");

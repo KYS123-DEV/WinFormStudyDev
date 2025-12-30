@@ -41,7 +41,7 @@
       lbl_id.AutoSize = true;
       lbl_id.Location = new Point(181, 138);
       lbl_id.Name = "lbl_id";
-      lbl_id.Size = new Size(70, 24);
+      lbl_id.Size = new Size(47, 16);
       lbl_id.TabIndex = 0;
       lbl_id.Text = "ID : ";
       // 
@@ -50,7 +50,7 @@
       lbl_pw.AutoSize = true;
       lbl_pw.Location = new Point(181, 198);
       lbl_pw.Name = "lbl_pw";
-      lbl_pw.Size = new Size(70, 24);
+      lbl_pw.Size = new Size(47, 16);
       lbl_pw.TabIndex = 1;
       lbl_pw.Text = "PW : ";
       // 
@@ -58,7 +58,7 @@
       // 
       txtb_id.Location = new Point(245, 133);
       txtb_id.Name = "txtb_id";
-      txtb_id.Size = new Size(295, 35);
+      txtb_id.Size = new Size(295, 26);
       txtb_id.TabIndex = 1;
       // 
       // txtb_pw
@@ -66,7 +66,7 @@
       txtb_pw.Location = new Point(245, 193);
       txtb_pw.Name = "txtb_pw";
       txtb_pw.PasswordChar = '*';
-      txtb_pw.Size = new Size(295, 35);
+      txtb_pw.Size = new Size(295, 26);
       txtb_pw.TabIndex = 3;
       txtb_pw.KeyDown += txtb_pw_KeyDown;
       // 
@@ -76,7 +76,7 @@
       lbl_title.Font = new Font("굴림체", 14F, FontStyle.Regular, GraphicsUnit.Point, 129);
       lbl_title.Location = new Point(175, 62);
       lbl_title.Name = "lbl_title";
-      lbl_title.Size = new Size(390, 28);
+      lbl_title.Size = new Size(279, 19);
       lbl_title.TabIndex = 4;
       lbl_title.Text = "전자결재 작성 신청 프로그램";
       // 
@@ -93,7 +93,7 @@
       // 
       // LoginForm
       // 
-      AutoScaleDimensions = new SizeF(12F, 24F);
+      AutoScaleDimensions = new SizeF(8F, 16F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(756, 393);
       Controls.Add(btn_login);
@@ -109,7 +109,6 @@
       ShowIcon = false;
       StartPosition = FormStartPosition.CenterScreen;
       Text = "Form1";
-      Load += LoginForm_Load;
       ResumeLayout(false);
       PerformLayout();
     }

@@ -1,4 +1,5 @@
 ﻿using KYS.NET.DATA.Common;
+using KYS.NET.DATA.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -11,11 +12,10 @@ using System.Threading.Tasks;
 
 namespace KYS.NET.DATA.Repositories
 {
-  public class UserRepository
+  public class UserRepository : IUserRepository
   {
     private readonly string? _connstr;
     public UserRepository() {
-      //설정 빌더 구성
       _connstr = DBConnectionObject.GetConnstr();
     }
 
@@ -25,9 +25,9 @@ namespace KYS.NET.DATA.Repositories
     /// <param name="userId"></param>
     /// <param name="pwd"></param>
     /// <returns></returns>
-    public (bool isValid, string? userid, string? usernm) CheckLogin(string userId, string pwd)
+    public (bool isValid, string? userid, string? usernm) Login(string userId, string pwd)
     {
-      using (SqlConnection conn = new (_connstr))
+      using (SqlConnection conn = new(_connstr))
       {
         conn.Open();
         using (SqlCommand cmd = new("dbo.usp_login", conn))
@@ -48,7 +48,7 @@ namespace KYS.NET.DATA.Repositories
 
           if (sdr.Read())
           {
-            result = Convert.ToInt32(sdr["result"]);
+            result = Convert.ToInt16(sdr["result"]);
             userid = sdr["userid"].ToString();
             usernm = sdr["usernm"].ToString();
           }
