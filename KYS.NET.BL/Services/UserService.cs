@@ -13,9 +13,10 @@ namespace KYS.NET.BL.Services
   {
     private readonly IUserRepository _user;
 
-    public UserService()
+    public UserService() : this(new UserRepository()) { }
+    public UserService(IUserRepository user)
     {
-      _user = new UserRepository();
+      _user = user;
     }
 
     /// <summary>

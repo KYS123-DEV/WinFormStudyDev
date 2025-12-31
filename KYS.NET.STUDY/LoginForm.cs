@@ -9,11 +9,11 @@ namespace KYS.NET.STUDY
 {
   public partial class LoginForm : Form
   {
-    private readonly IUserService _auth;
+    private readonly IUserService _user;
     public LoginForm()
     {
       InitializeComponent();
-      _auth = new UserService();
+      _user = new UserService();
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ namespace KYS.NET.STUDY
     {
       try
       {
-        var result = _auth.Login(txtb_id.Text, txtb_pw.Text);
+        var result = _user.Login(txtb_id.Text, txtb_pw.Text);
         if (result.IsSuccess)
         {
           //1. 로그인 성공

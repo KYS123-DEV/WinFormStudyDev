@@ -20,7 +20,7 @@ namespace KYS.NET.DATA.Repositories
     private readonly string? _Connstr;
     public CodeRepository()
     {
-      _Connstr = DBConnectionObject.GetConnstr();
+      _Connstr = DBConnectionObject.DBConnStr;
     }
 
     public List<ComboItem> Select(string codekind, string kind)

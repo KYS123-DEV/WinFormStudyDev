@@ -1,13 +1,19 @@
 ﻿using KYS.NET.BL.Common;
+using KYS.NET.BL.Interfaces;
+using KYS.NET.BL.Services;
+using KYS.NET.MODELS;
 using KYS.NET.STUDY.Utils;
 
 namespace KYS.NET.STUDY.Forms.Approval
 {
   public partial class ApprovalRequestForm : Form
   {
+    private readonly IDocumentService _doc;
+
     public ApprovalRequestForm()
     {
       InitializeComponent();
+      _doc = new DocumentService();
     }
 
     /// <summary>
@@ -52,13 +58,30 @@ namespace KYS.NET.STUDY.Forms.Approval
     }
 
     /// <summary>
-    /// 문서 저장 (CRUD - Create)
+    /// 문서 저장 (Create 혹은 Update)
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void btn_save_Click(object sender, EventArgs e)
     {
+      try
+      {
+        DocumentModel documentModel = new DocumentModel
+        {
+          DocNo = txtb_docno.Text,
+          DocTitle = txtb_doctitle.Text,
+          DocContent = txtb_doccontent.Text,
+          DocFilenm = txtb_docfilenm.Text,
+          DocDiv = cb_docdiv.SelectedValue?.ToString() ?? string.Empty,
+        };
 
+        var result = _doc.InsertDocument(documentModel);
+        // 결과 처리 작성하기.
+
+      } catch (Exception ex)
+      {
+        MsgHelper.ShowError("[Save error] : " + ex.Message);
+      }
     }
   }
 }

@@ -16,7 +16,7 @@ namespace KYS.NET.DATA.Repositories
   {
     private readonly string? _connstr;
     public UserRepository() {
-      _connstr = DBConnectionObject.GetConnstr();
+      _connstr = DBConnectionObject.DBConnStr;
     }
 
     /// <summary>

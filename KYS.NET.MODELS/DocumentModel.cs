@@ -1,14 +1,17 @@
 ﻿namespace KYS.NET.MODELS
 {
-  public class DocumentModel
+  /// <summary>
+  /// 데이터 전달용 모델
+  /// </summary>
+  public record DocumentModel
   {
-    string DocNo { get; set; } = string.Empty;
+    public string? DocNo { init; get; } = string.Empty;
     //entryid
-    string DocTitle { get; set; } = string.Empty;
-    string DocContent { get; set; } = string.Empty;
-    string DocFilenm { get; set; } = string.Empty;
-    string DocDiv { get; set; } = string.Empty;
-    string DocComment { get; set; } = string.Empty;
+    public string? DocTitle { init; get; }
+    public string? DocContent { init; get; } = string.Empty;
+    public string? DocFilenm { init; get; } = string.Empty;
+    public string DocDiv { init; get; } = string.Empty;
+    public string? DocComment { init; get; } = string.Empty;
     //entrydt
     //updatedt
     //enddt
