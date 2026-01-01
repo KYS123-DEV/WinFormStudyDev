@@ -483,7 +483,7 @@
       Controls.Add(gb_info);
       Name = "ApprovalRequestForm";
       StartPosition = FormStartPosition.CenterScreen;
-      Text = "ApprovalRequestForm";
+      Text = "결재서 작성 프로그램";
       Load += ApprovalRequestForm_Load;
       gb_info.ResumeLayout(false);
       gb_info.PerformLayout();

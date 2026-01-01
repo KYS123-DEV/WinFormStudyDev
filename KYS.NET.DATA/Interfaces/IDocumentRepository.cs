@@ -10,5 +10,6 @@ namespace KYS.NET.DATA.Interfaces
   {
     public string GenerateDocumentNumber();
     public bool InsertDocument<T>(T ModelObject) where T : class;
+    public int UpdateDocument<T>(T ModelObject) where T : class;
   }
 }

@@ -1,8 +1,10 @@
 ﻿using KYS.NET.BL.Common;
 using KYS.NET.BL.Interfaces;
 using KYS.NET.BL.Services;
+using KYS.NET.DATA.Common;
 using KYS.NET.MODELS;
 using KYS.NET.STUDY.Utils;
+using System.Data.Common;
 
 namespace KYS.NET.STUDY.Forms.Approval
 {
@@ -23,6 +25,9 @@ namespace KYS.NET.STUDY.Forms.Approval
     /// <param name="e"></param>
     private void ApprovalRequestForm_Load(object sender, EventArgs e)
     {
+      //폼 제목
+      //Text += DBConnectionObject.CurrentSpid;
+
       // 화면 상단 라벨에 사용자 정보 표시
       lbl_welcome.Text = $"Logged in as: {SessionManager.CurrentSession?.UserId} ";
       lbl_welcome.Text += $"({SessionManager.CurrentSession?.UserName})";
@@ -68,15 +73,25 @@ namespace KYS.NET.STUDY.Forms.Approval
       {
         DocumentModel documentModel = new DocumentModel
         {
-          DocNo = txtb_docno.Text,
+          DocNo = string.Empty,
+          EntryId = SessionManager.CurrentSession?.UserId,
           DocTitle = txtb_doctitle.Text,
           DocContent = txtb_doccontent.Text,
           DocFilenm = txtb_docfilenm.Text,
           DocDiv = cb_docdiv.SelectedValue?.ToString() ?? string.Empty,
         };
 
-        var result = _doc.InsertDocument(documentModel);
         // 결과 처리 작성하기.
+        var result = _doc.InsertDocument(documentModel);
+
+        if (result.IsSuccess)
+        {
+          MsgHelper.ShowInfo(result.Message);
+        }
+        else
+        {
+          MsgHelper.ShowWarning(result.Message);
+        }
 
       } catch (Exception ex)
       {

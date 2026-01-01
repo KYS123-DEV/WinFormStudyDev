@@ -6,7 +6,7 @@
   public record DocumentModel
   {
     public string? DocNo { init; get; } = string.Empty;
-    //entryid
+    public string? EntryId { init; get; } = string.Empty;
     public string? DocTitle { init; get; }
     public string? DocContent { init; get; } = string.Empty;
     public string? DocFilenm { init; get; } = string.Empty;
