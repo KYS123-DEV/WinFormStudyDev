@@ -1,14 +1,7 @@
 ﻿using KYS.NET.DATA.Common;
 using KYS.NET.DATA.Interfaces;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KYS.NET.DATA.Repositories
 {

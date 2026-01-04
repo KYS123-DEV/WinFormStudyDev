@@ -9,7 +9,8 @@ namespace KYS.NET.DATA.Interfaces
   public interface IDocumentRepository
   {
     public string GenerateDocumentNumber();
-    public bool InsertDocument<T>(T ModelObject) where T : class;
-    public int UpdateDocument<T>(T ModelObject) where T : class;
+    List<T> SelectDocument<T>(T ModelObject) where T : class;
+    bool InsertDocument<T>(T ModelObject) where T : class;
+    int UpdateDocument<T>(T ModelObject) where T : class;
   }
 }

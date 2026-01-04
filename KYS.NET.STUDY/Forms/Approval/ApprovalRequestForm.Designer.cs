@@ -41,11 +41,10 @@
       dt_picker1 = new DateTimePicker();
       lbl_wave = new Label();
       gb_utils = new GroupBox();
-      dateTimePicker1 = new DateTimePicker();
+      dt_picker2 = new DateTimePicker();
       cb_dt = new ComboBox();
       cb_search = new ComboBox();
       txtb_search = new TextBox();
-      lv_approval = new ListView();
       lbl_enrolldt = new Label();
       txtb_enrolldt = new TextBox();
       cb_docdiv = new ComboBox();
@@ -62,8 +61,10 @@
       lbl_comment = new Label();
       txtb_comment = new RichTextBox();
       txtb_docno = new TextBox();
+      dgv_approval = new DataGridView();
       gb_info.SuspendLayout();
       gb_utils.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)dgv_approval).BeginInit();
       SuspendLayout();
       // 
       // gb_info
@@ -153,6 +154,7 @@
       btn_retrieve.TabIndex = 0;
       btn_retrieve.Text = "조회(R)";
       btn_retrieve.UseVisualStyleBackColor = true;
+      btn_retrieve.Click += btn_retrieve_Click;
       // 
       // txtb_title1
       // 
@@ -184,6 +186,7 @@
       // dt_picker1
       // 
       dt_picker1.Font = new Font("굴림체", 10F, FontStyle.Regular, GraphicsUnit.Point, 129);
+      dt_picker1.Format = DateTimePickerFormat.Short;
       dt_picker1.Location = new Point(169, 182);
       dt_picker1.Name = "dt_picker1";
       dt_picker1.Size = new Size(281, 30);
@@ -217,14 +220,15 @@
       gb_utils.TabStop = false;
       gb_utils.Text = "Utils";
       // 
-      // dateTimePicker1
+      // dt_picker2
       // 
-      dateTimePicker1.Font = new Font("굴림체", 10F, FontStyle.Regular, GraphicsUnit.Point, 129);
-      dateTimePicker1.Location = new Point(474, 182);
-      dateTimePicker1.Name = "dateTimePicker1";
-      dateTimePicker1.Size = new Size(281, 30);
-      dateTimePicker1.TabIndex = 2;
-      dateTimePicker1.Value = new DateTime(2025, 12, 25, 12, 6, 13, 0);
+      dt_picker2.Font = new Font("굴림체", 10F, FontStyle.Regular, GraphicsUnit.Point, 129);
+      dt_picker2.Format = DateTimePickerFormat.Short;
+      dt_picker2.Location = new Point(474, 182);
+      dt_picker2.Name = "dt_picker2";
+      dt_picker2.Size = new Size(281, 30);
+      dt_picker2.TabIndex = 2;
+      dt_picker2.Value = new DateTime(2025, 12, 25, 12, 6, 13, 0);
       // 
       // cb_dt
       // 
@@ -258,16 +262,6 @@
       txtb_search.Name = "txtb_search";
       txtb_search.Size = new Size(587, 31);
       txtb_search.TabIndex = 1;
-      // 
-      // lv_approval
-      // 
-      lv_approval.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-      lv_approval.Location = new Point(11, 343);
-      lv_approval.MultiSelect = false;
-      lv_approval.Name = "lv_approval";
-      lv_approval.Size = new Size(524, 886);
-      lv_approval.TabIndex = 13;
-      lv_approval.UseCompatibleStateImageBehavior = false;
       // 
       // lbl_enrolldt
       // 
@@ -449,11 +443,22 @@
       txtb_docno.Size = new Size(309, 30);
       txtb_docno.TabIndex = 30;
       // 
+      // dgv_approval
+      // 
+      dgv_approval.BackgroundColor = SystemColors.Menu;
+      dgv_approval.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      dgv_approval.Location = new Point(11, 346);
+      dgv_approval.Name = "dgv_approval";
+      dgv_approval.RowHeadersWidth = 62;
+      dgv_approval.Size = new Size(524, 883);
+      dgv_approval.TabIndex = 31;
+      // 
       // ApprovalRequestForm
       // 
       AutoScaleDimensions = new SizeF(10F, 25F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(1251, 1250);
+      Controls.Add(dgv_approval);
       Controls.Add(txtb_docno);
       Controls.Add(txtb_comment);
       Controls.Add(lbl_comment);
@@ -470,11 +475,10 @@
       Controls.Add(cb_docdiv);
       Controls.Add(txtb_enrolldt);
       Controls.Add(lbl_enrolldt);
-      Controls.Add(lv_approval);
       Controls.Add(txtb_search);
       Controls.Add(cb_search);
       Controls.Add(cb_dt);
-      Controls.Add(dateTimePicker1);
+      Controls.Add(dt_picker2);
       Controls.Add(gb_utils);
       Controls.Add(lbl_wave);
       Controls.Add(dt_picker1);
@@ -488,6 +492,7 @@
       gb_info.ResumeLayout(false);
       gb_info.PerformLayout();
       gb_utils.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)dgv_approval).EndInit();
       ResumeLayout(false);
       PerformLayout();
     }
@@ -507,11 +512,10 @@
     private DateTimePicker dt_picker1;
     private Label lbl_wave;
     private GroupBox gb_utils;
-    private DateTimePicker dateTimePicker1;
+    private DateTimePicker dt_picker2;
     private ComboBox cb_dt;
     private ComboBox cb_search;
     private TextBox txtb_search;
-    private ListView lv_approval;
     private Label lbl_enrolldt;
     private TextBox txtb_enrolldt;
     private ComboBox cb_docdiv;
@@ -528,5 +532,6 @@
     private Label lbl_comment;
     private RichTextBox txtb_comment;
     private TextBox txtb_docno;
+    private DataGridView dgv_approval;
   }
 }

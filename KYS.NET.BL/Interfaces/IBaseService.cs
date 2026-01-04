@@ -8,6 +8,7 @@ namespace KYS.NET.BL.Interfaces
 {
   public interface IBaseService<T> where T : class
   {
+    (bool IsSuccess, string Message, List<T> SelectList) SelectDocument(T ModelObject);
     (bool IsSuccess, string Message) InsertDocument(T ModelObject);
     (bool IsSuccess, string Message) UpdateDocument(T ModelObject);
   }

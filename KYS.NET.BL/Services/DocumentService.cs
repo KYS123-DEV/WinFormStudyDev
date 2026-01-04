@@ -28,6 +28,26 @@ namespace KYS.NET.BL.Services
     }
 
     /// <summary>
+    /// 문서 조회 (SELECT)
+    /// 수정 필요
+    /// </summary>
+    /// <param name="ModelObject"></param>
+    /// <returns></returns>
+    public (bool IsSuccess, string Message, List<DocumentModel> SelectList) SelectDocument(DocumentModel ModelObject)
+    {
+      List<DocumentModel> result = _doc.SelectDocument<DocumentModel>(ModelObject);
+
+      if (result.Count == 0)
+      {
+        return (false, "조회된 문서가 없습니다.", new List<DocumentModel>());
+      }
+      else
+      {
+        return (true, "", result);
+      }
+    }
+
+    /// <summary>
     /// 문서 저장 ( Insert 혹은 Update )
     /// </summary>
     /// <param name="ModelObject"></param>
@@ -50,11 +70,11 @@ namespace KYS.NET.BL.Services
         return UpdateDocument(ModelObject);
       }
 
-        ModelObject = ModelObject with
-        {
-          DocNo = docNo,
-          EntryId = SessionManager.CurrentSession?.UserId
-        };
+      ModelObject = ModelObject with
+      {
+        DocNo = docNo,
+        EntryId = SessionManager.CurrentSession?.UserId
+      };
 
       //3. 문서 Save 프로시저 호출
       bool result = _doc.InsertDocument<DocumentModel>(ModelObject);

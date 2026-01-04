@@ -1,5 +1,6 @@
 ﻿using KYS.NET.DATA.Common;
 using KYS.NET.DATA.Interfaces;
+using KYS.NET.MODELS;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -32,6 +33,55 @@ namespace KYS.NET.DATA.Repositories
     }
 
     /// <summary>
+    /// 조회 로직
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="ModelObject"></param>
+    /// <returns></returns>
+    public List<T> SelectDocument<T>(T ModelObject) where T : class
+    {
+      List<T> resultList = new List<T>();
+      var searchModel = ModelObject as DocumentModel;
+
+      using (SqlConnection conn = new(_connStr))
+      {
+        conn.Open();
+        using (SqlCommand cmd = new("dbo.usp_get_doc_s", conn))
+        {
+          cmd.Parameters.AddWithValue("@p_docdtdiv", searchModel?.DocDtDiv);
+          cmd.Parameters.AddWithValue("@p_dt1", searchModel?.Dt1);
+          cmd.Parameters.AddWithValue("@p_dt2", searchModel?.Dt2);
+          cmd.Parameters.AddWithValue("@p_doccontentdiv", searchModel?.DocContentDiv);
+          cmd.Parameters.AddWithValue("@p_docsearchtext", searchModel?.DocSearchText);
+
+          cmd.CommandType = CommandType.StoredProcedure;
+
+          using (SqlDataReader sdr = cmd.ExecuteReader())
+          {
+            while (sdr.Read())
+            {
+              // 데이터 매핑 (DocumentModel 객체 생성)
+              var item = new DocumentModel
+              {
+                DocNo = sdr["doc_no"]?.ToString(),
+                DocTitle = sdr["doc_title"]?.ToString(),
+                DocContent = sdr["doc_content"]?.ToString(),
+                EntryId = sdr["entryid"]?.ToString(),
+                Entrydt = sdr["entrydt"]?.ToString(),
+                Enddt = sdr["enddt"]?.ToString()
+                // 추가 컬럼이 있다면 여기에 작성
+              };
+
+              resultList.Add(item as T);
+            }
+          }
+
+        }
+      }
+      return resultList;
+    }
+
+    /// <summary>
     /// 신규 문서 저장 Proc 호출
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -48,11 +98,22 @@ namespace KYS.NET.DATA.Repositories
           cmd.Parameters.AddWithValue("@p_flag", "i");
 
           //ModelObject 의 속성들을 파라미터로 추가 (Reflection 활용) 
-          foreach (var prop in ModelObject.GetType().GetProperties())
+          /*foreach (var prop in ModelObject.GetType().GetProperties())
           {
             var value = prop.GetValue(ModelObject) ?? DBNull.Value;
             cmd.Parameters.AddWithValue($"@p_{prop.Name.ToLower()}", value);
-          }
+          }*/
+
+          cmd.Parameters.AddWithValue("@p_docno", (ModelObject as DocumentModel)?.DocNo);
+          cmd.Parameters.AddWithValue("@p_entryid", (ModelObject as DocumentModel)?.EntryId);
+          cmd.Parameters.AddWithValue("@p_doctitle", (ModelObject as DocumentModel)?.DocTitle);
+          cmd.Parameters.AddWithValue("@p_doccontent", (ModelObject as DocumentModel)?.DocContent);
+          cmd.Parameters.AddWithValue("@p_docfilenm", (ModelObject as DocumentModel)?.DocFilenm);
+          cmd.Parameters.AddWithValue("@p_docdiv", (ModelObject as DocumentModel)?.DocDiv);
+          cmd.Parameters.AddWithValue("@p_doccomment", (ModelObject as DocumentModel)?.DocComment);
+          cmd.Parameters.AddWithValue("@p_entrydt", (ModelObject as DocumentModel)?.Entrydt);
+          cmd.Parameters.AddWithValue("@p_updatedt", (ModelObject as DocumentModel)?.Updatedt);
+          cmd.Parameters.AddWithValue("@p_enddt", (ModelObject as DocumentModel)?.Enddt);
 
           //프로시저 실행
           cmd.CommandType = CommandType.StoredProcedure;
