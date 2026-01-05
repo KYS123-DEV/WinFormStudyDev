@@ -38,10 +38,12 @@ namespace KYS.NET.DATA.Repositories
     /// <typeparam name="T"></typeparam>
     /// <param name="ModelObject"></param>
     /// <returns></returns>
-    public List<T> SelectDocument<T>(T ModelObject) where T : class
+    public List<TResult> SelectDocument<TResult, TSearch>(TSearch ModelObject)
+      where TResult : class
+      where TSearch : class
     {
-      List<T> resultList = new List<T>();
-      var searchModel = ModelObject as DocumentModel;
+      List<TResult> resultList = new List<TResult>();
+      var searchModel = ModelObject as DocumentModelForSearch;
 
       using (SqlConnection conn = new(_connStr))
       {
@@ -72,7 +74,7 @@ namespace KYS.NET.DATA.Repositories
                 // 추가 컬럼이 있다면 여기에 작성
               };
 
-              resultList.Add(item as T);
+              resultList.Add(item as TResult);
             }
           }
 

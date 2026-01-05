@@ -111,7 +111,7 @@ namespace KYS.NET.STUDY.Forms.Approval
     /// <param name="e"></param>
     private void btn_retrieve_Click(object sender, EventArgs e)
     {
-      dgv_approval.Rows.Clear();
+      dgv_approval.DataSource = null;
 
       //날짜 구분 값 획득
       string? cb_dt_div = cb_dt.SelectedValue?.ToString();
@@ -128,7 +128,7 @@ namespace KYS.NET.STUDY.Forms.Approval
 
       try
       {
-        DocumentModel documentModel = new DocumentModel
+        DocumentModelForSearch documentModel = new DocumentModelForSearch
         {
           DocDtDiv = cb_dt_div,
           Dt1 = dt_start,

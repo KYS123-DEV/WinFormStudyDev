@@ -33,13 +33,14 @@ namespace KYS.NET.BL.Services
     /// </summary>
     /// <param name="ModelObject"></param>
     /// <returns></returns>
-    public (bool IsSuccess, string Message, List<DocumentModel> SelectList) SelectDocument(DocumentModel ModelObject)
+    public (bool IsSuccess, string Message, List<DocumentModel> SelectList) SelectDocument<TSearch>(TSearch ModelObject)
+      where TSearch : class
     {
-      List<DocumentModel> result = _doc.SelectDocument<DocumentModel>(ModelObject);
+      List<DocumentModel> result = _doc.SelectDocument<DocumentModel, TSearch>(ModelObject);
 
       if (result.Count == 0)
       {
-        return (false, "조회된 문서가 없습니다.", new List<DocumentModel>());
+        return (false, "조회된 문서가 없습니다.", result);
       }
       else
       {

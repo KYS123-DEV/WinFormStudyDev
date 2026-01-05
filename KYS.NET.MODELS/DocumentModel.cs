@@ -21,4 +21,16 @@
     public string? Dt2 { init; get; } = string.Empty;
     public string? DocSearchText { init; get; } = string.Empty;
   }
+
+  /// <summary>
+  /// 조회 조건용 Model
+  /// </summary>
+  public record DocumentModelForSearch
+  {
+    public string? DocDtDiv { init; get; } = string.Empty;
+    public string? DocContentDiv { init; get; } = string.Empty;
+    public string? Dt1 { init; get; } = string.Empty;
+    public string? Dt2 { init; get; } = string.Empty;
+    public string? DocSearchText { init; get; } = string.Empty;
+  }
 }
