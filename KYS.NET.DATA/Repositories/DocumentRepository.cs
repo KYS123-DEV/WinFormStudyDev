@@ -63,11 +63,10 @@ namespace KYS.NET.DATA.Repositories
             while (sdr.Read())
             {
               // 데이터 매핑 (DocumentModel 객체 생성)
-              var item = new DocumentModel
+              var item = new DocumentModelForCRUD
               {
                 DocNo = sdr["doc_no"]?.ToString(),
                 DocTitle = sdr["doc_title"]?.ToString(),
-                DocContent = sdr["doc_content"]?.ToString(),
                 EntryId = sdr["entryid"]?.ToString(),
                 Entrydt = sdr["entrydt"]?.ToString(),
                 Enddt = sdr["enddt"]?.ToString()
@@ -106,16 +105,16 @@ namespace KYS.NET.DATA.Repositories
             cmd.Parameters.AddWithValue($"@p_{prop.Name.ToLower()}", value);
           }*/
 
-          cmd.Parameters.AddWithValue("@p_docno", (ModelObject as DocumentModel)?.DocNo);
-          cmd.Parameters.AddWithValue("@p_entryid", (ModelObject as DocumentModel)?.EntryId);
-          cmd.Parameters.AddWithValue("@p_doctitle", (ModelObject as DocumentModel)?.DocTitle);
-          cmd.Parameters.AddWithValue("@p_doccontent", (ModelObject as DocumentModel)?.DocContent);
-          cmd.Parameters.AddWithValue("@p_docfilenm", (ModelObject as DocumentModel)?.DocFilenm);
-          cmd.Parameters.AddWithValue("@p_docdiv", (ModelObject as DocumentModel)?.DocDiv);
-          cmd.Parameters.AddWithValue("@p_doccomment", (ModelObject as DocumentModel)?.DocComment);
-          cmd.Parameters.AddWithValue("@p_entrydt", (ModelObject as DocumentModel)?.Entrydt);
-          cmd.Parameters.AddWithValue("@p_updatedt", (ModelObject as DocumentModel)?.Updatedt);
-          cmd.Parameters.AddWithValue("@p_enddt", (ModelObject as DocumentModel)?.Enddt);
+          cmd.Parameters.AddWithValue("@p_docno", (ModelObject as DocumentModelForCRUD)?.DocNo);
+          cmd.Parameters.AddWithValue("@p_entryid", (ModelObject as DocumentModelForCRUD)?.EntryId);
+          cmd.Parameters.AddWithValue("@p_doctitle", (ModelObject as DocumentModelForCRUD)?.DocTitle);
+          cmd.Parameters.AddWithValue("@p_doccontent", (ModelObject as DocumentModelForCRUD)?.DocContent);
+          cmd.Parameters.AddWithValue("@p_docfilenm", (ModelObject as DocumentModelForCRUD)?.DocFilenm);
+          cmd.Parameters.AddWithValue("@p_docdiv", (ModelObject as DocumentModelForCRUD)?.DocDiv);
+          cmd.Parameters.AddWithValue("@p_doccomment", (ModelObject as DocumentModelForCRUD)?.DocComment);
+          cmd.Parameters.AddWithValue("@p_entrydt", (ModelObject as DocumentModelForCRUD)?.Entrydt);
+          cmd.Parameters.AddWithValue("@p_updatedt", (ModelObject as DocumentModelForCRUD)?.Updatedt);
+          cmd.Parameters.AddWithValue("@p_enddt", (ModelObject as DocumentModelForCRUD)?.Enddt);
 
           //프로시저 실행
           cmd.CommandType = CommandType.StoredProcedure;

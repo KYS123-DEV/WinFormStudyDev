@@ -75,7 +75,7 @@ namespace KYS.NET.STUDY.Forms.Approval
     {
       try
       {
-        DocumentModel documentModel = new DocumentModel
+        DocumentModelForCRUD documentModel = new DocumentModelForCRUD
         {
           DocNo = string.Empty,
           EntryId = SessionManager.CurrentSession?.UserId,
@@ -96,7 +96,6 @@ namespace KYS.NET.STUDY.Forms.Approval
         {
           MsgHelper.ShowWarning(result.Message);
         }
-
       }
       catch (Exception ex)
       {
@@ -137,21 +136,23 @@ namespace KYS.NET.STUDY.Forms.Approval
           DocSearchText = cb_search_txt
         };
 
-        //Service 호출
-        (bool IsSuccess, string Message, List<DocumentModel> SelectList) result = _doc.SelectDocument(documentModel);
+        //Service 호출 및 결과 자료 받음.
+        (bool IsSuccess, string Message, List<DocumentModelForCRUD> SelectList) result =
+          _doc.SelectDocument<DocumentModelForCRUD,DocumentModelForSearch>(documentModel);
 
         //결과 처리 필요
         if (!result.IsSuccess)
         {
           MsgHelper.ShowWarning(result.Message);
+          return;
         }
 
         //DataGridView에 결과 바인딩
         dgv_approval.DataSource = result.SelectList;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MsgHelper.ShowError("[Retrieve error] : " + ex.Message);
-        return;
       }
     }
   }

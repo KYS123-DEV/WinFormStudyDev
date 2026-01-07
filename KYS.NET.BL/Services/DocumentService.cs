@@ -12,7 +12,7 @@ namespace KYS.NET.BL.Services
   public class DocumentService : IDocumentService
   {
     private readonly IDocumentRepository _doc;
-    public DocumentService() : this(new DocumentRepository()) {}
+    public DocumentService() : this(new DocumentRepository()) { }
     public DocumentService(IDocumentRepository doc)
     {
       _doc = doc;
@@ -33,10 +33,12 @@ namespace KYS.NET.BL.Services
     /// </summary>
     /// <param name="ModelObject"></param>
     /// <returns></returns>
-    public (bool IsSuccess, string Message, List<DocumentModel> SelectList) SelectDocument<TSearch>(TSearch ModelObject)
+    public (bool IsSuccess, string Message, List<TResult> SelectList) SelectDocument
+      <TResult, TSearch>(TSearch ModelObject)
+      where TResult : class
       where TSearch : class
     {
-      List<DocumentModel> result = _doc.SelectDocument<DocumentModel, TSearch>(ModelObject);
+      List<TResult> result = _doc.SelectDocument<TResult, TSearch>(ModelObject);
 
       if (result.Count == 0)
       {
@@ -53,7 +55,7 @@ namespace KYS.NET.BL.Services
     /// </summary>
     /// <param name="ModelObject"></param>
     /// <returns></returns>
-    public (bool IsSuccess, string Message) InsertDocument(DocumentModel ModelObject)
+    public (bool IsSuccess, string Message) InsertDocument<T>(T ModelObject) where T : class
     {
       //1. docNo 비어 있는지 확인
       string docNo = ModelObject.DocNo ?? string.Empty;
@@ -65,7 +67,8 @@ namespace KYS.NET.BL.Services
 
         if (string.IsNullOrEmpty(docNo))
           return (false, "문서 채번 로직 오류!");
-      } else
+      }
+      else
       {
         //3. docNo 값이 있으면 Update 로직 호출
         return UpdateDocument(ModelObject);
@@ -78,7 +81,7 @@ namespace KYS.NET.BL.Services
       };
 
       //3. 문서 Save 프로시저 호출
-      bool result = _doc.InsertDocument<DocumentModel>(ModelObject);
+      bool result = _doc.InsertDocument<DocumentModelForCRUD>(ModelObject);
 
       return result ? (true, "문서 저장 성공!") : (false, "문서 저장 실패!");
     }
@@ -88,9 +91,9 @@ namespace KYS.NET.BL.Services
     /// </summary>
     /// <param name="ModelObject"></param>
     /// <returns></returns>
-    public (bool IsSuccess, string Message) UpdateDocument(DocumentModel ModelObject)
+    public (bool IsSuccess, string Message) UpdateDocument<T>(T ModelObject) where T : class
     {
-      if (_doc.UpdateDocument<DocumentModel>(ModelObject) <= 0)
+      if (_doc.UpdateDocument<T>(ModelObject) <= 0)
       {
         return (false, "문서 수정 실패!");
       }
