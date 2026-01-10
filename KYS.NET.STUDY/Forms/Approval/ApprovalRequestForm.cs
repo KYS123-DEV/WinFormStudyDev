@@ -4,6 +4,7 @@ using KYS.NET.BL.Services;
 using KYS.NET.DATA.Common;
 using KYS.NET.MODELS;
 using KYS.NET.STUDY.Utils;
+using Microsoft.IdentityModel.Tokens;
 using System.Data.Common;
 
 namespace KYS.NET.STUDY.Forms.Approval
@@ -35,6 +36,9 @@ namespace KYS.NET.STUDY.Forms.Approval
       // 화면 상단 라벨에 사용자 정보 표시
       lbl_welcome.Text = $"Logged in as: {SessionManager.CurrentSession?.UserId} ";
       lbl_welcome.Text += $"({SessionManager.CurrentSession?.UserName})";
+
+      //dgv_approval DataGridView에 컬럼 추가.
+      Dgv_approval_InitGrid();
 
       //조회 combobox 컨트롤 setting
       try
@@ -71,8 +75,19 @@ namespace KYS.NET.STUDY.Forms.Approval
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btn_save_Click(object sender, EventArgs e)
+    private async void btn_save_Click(object sender, EventArgs e)
     {
+      //제목 AND 내용 작성되어 있지 않으면 return.
+      if (string.IsNullOrEmpty(txtb_doctitle.Text) && string.IsNullOrEmpty(txtb_doccontent.Text))
+      {
+        MsgHelper.ShowWarning("제목 및 내용을 작성하세요.");
+        return;
+      }
+
+      //저장하시겠습니까? 메시지 알림.
+      if (MsgHelper.ShowQuestion("저장하시겠습니까?") == DialogResult.No)
+        return;
+      
       try
       {
         DocumentModelForCRUD documentModel = new DocumentModelForCRUD
@@ -86,10 +101,11 @@ namespace KYS.NET.STUDY.Forms.Approval
         };
 
         // 결과 처리 작성하기.
-        var result = _doc.InsertDocument(documentModel);
+        var result = await _doc.SaveDocumentAsync(documentModel);
 
         if (result.IsSuccess)
         {
+          await RetrieveData();
           MsgHelper.ShowInfo(result.Message);
         }
         else
@@ -108,7 +124,7 @@ namespace KYS.NET.STUDY.Forms.Approval
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btn_retrieve_Click(object sender, EventArgs e)
+    private async Task RetrieveData()
     {
       dgv_approval.DataSource = null;
 
@@ -138,7 +154,7 @@ namespace KYS.NET.STUDY.Forms.Approval
 
         //Service 호출 및 결과 자료 받음.
         (bool IsSuccess, string Message, List<DocumentModelForCRUD> SelectList) result =
-          _doc.SelectDocument<DocumentModelForCRUD,DocumentModelForSearch>(documentModel);
+          await _doc.SelectDocumentAsync<DocumentModelForCRUD, DocumentModelForSearch>(documentModel);
 
         //결과 처리 필요
         if (!result.IsSuccess)
@@ -148,12 +164,52 @@ namespace KYS.NET.STUDY.Forms.Approval
         }
 
         //DataGridView에 결과 바인딩
+        result.SelectList.ToList().Where(item => item.GetType().Name.Equals(dgv_approval.Name));
         dgv_approval.DataSource = result.SelectList;
       }
       catch (Exception ex)
       {
         MsgHelper.ShowError("[Retrieve error] : " + ex.Message);
       }
+    }
+
+    private async void btn_retrieve_Click(object sender, EventArgs e)
+    {
+      await RetrieveData();
+    }
+
+    /// <summary>
+    /// Dgv_approval 데이터그리드뷰에 기본 컬럼 생성하기.
+    /// </summary>
+    private void Dgv_approval_InitGrid()
+    {
+      dgv_approval.Columns.Clear();
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocNo","DocNo","문서번호",120,true,true));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocTitle","DocTitle","문서제목",200,true,true));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("EntryDt","EntryDt","신청일자/접수일자",200,true,true));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("EndDt", "EndDt", "완료일자", 200, true, true));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("UpdateDt","UpdateDt","수정일자",0,true,false));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("EntryId","EntryId","작성자",100,true,true));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocContent","DocContent","문서내용",0,true,false));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocComment", "DocComment", "관리자 답변",0,true,false));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocFilenm","DocFilenm","첨부파일",0,true,false));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocDiv","DocDiv","문서구분",0,true,false));
+    }
+
+    //결재서 DataGridView에 기초 컬럼 setting.
+    private DataGridViewTextBoxColumn Dgv_approval_AddColumns(
+      string columnName, string dataPropertyName, string headerText
+      , int width, bool readOnly, bool visiblity)
+    {
+      return new DataGridViewTextBoxColumn
+      {
+        Name = columnName,
+        DataPropertyName = dataPropertyName, // 모델(DocumentModelForCRUD)의 프로퍼티명
+        HeaderText = headerText,
+        Width = width,
+        ReadOnly = readOnly,
+        Visible = visiblity
+      };
     }
   }
 }

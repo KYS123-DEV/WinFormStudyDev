@@ -32,22 +32,18 @@ namespace KYS.NET.BL.Services
     /// 수정 필요
     /// </summary>
     /// <param name="ModelObject"></param>
-    /// <returns></returns>
-    public (bool IsSuccess, string Message, List<TResult> SelectList) SelectDocument
-      <TResult, TSearch>(TSearch ModelObject)
-      where TResult : class
-      where TSearch : class
+    public async Task<(bool IsSuccess, string Message, List<TResult> SelectList)>
+    SelectDocumentAsync<TResult, TSearch>(TSearch ModelObject)
+    where TResult : class, new()
+    where TSearch : class
     {
-      List<TResult> result = _doc.SelectDocument<TResult, TSearch>(ModelObject);
+      // Repository의 비동기 메서드를 await로 호출
+      var result = await _doc.SelectDocumentAsync<TResult, TSearch>(ModelObject);
 
-      if (result.Count == 0)
-      {
-        return (false, "조회된 문서가 없습니다.", result);
-      }
-      else
-      {
-        return (true, "", result);
-      }
+      if (result == null || result.Count == 0)
+        return (false, "조회된 문서가 없습니다.", new List<TResult>());
+
+      return (true, "", result);
     }
 
     /// <summary>
@@ -55,51 +51,34 @@ namespace KYS.NET.BL.Services
     /// </summary>
     /// <param name="ModelObject"></param>
     /// <returns></returns>
-    public (bool IsSuccess, string Message) InsertDocument<T>(T ModelObject) where T : class
+    public async Task<(bool IsSuccess, string Message)> SaveDocumentAsync<T>(T ModelObject) where T : class
     {
-      //1. docNo 비어 있는지 확인
-      string docNo = ModelObject.DocNo ?? string.Empty;
+      var crudModel = ModelObject as DocumentModelForCRUD;
+      if (crudModel == null) return (false, "유효하지 않은 모델 형식입니다.");
 
-      //2. docNo 비어 있으면 채번 프로시저 호출하여 획득 (프로시저) : 신규 입력 저장
-      if (string.IsNullOrEmpty(docNo))
+      string newDocNo;
+      //docNo가 없으면 신규 채번 (Insert)
+      if (string.IsNullOrEmpty(crudModel.DocNo))
       {
-        docNo = GenerateDocumentNumber();
+        newDocNo = GenerateDocumentNumber();
+        if (string.IsNullOrEmpty(newDocNo))
+        {
+          return (false, "채번 실패!");
+        }
 
-        if (string.IsNullOrEmpty(docNo))
-          return (false, "문서 채번 로직 오류!");
+        crudModel = crudModel with
+        {
+          DocNo = newDocNo,
+          EntryId = SessionManager.CurrentSession?.UserId
+        };
+
+        bool isOk = await _doc.InsertDocumentAsync(crudModel);
+        return isOk ? (true, "저장 성공") : (false, "저장 실패");
       }
       else
       {
-        //3. docNo 값이 있으면 Update 로직 호출
-        return UpdateDocument(ModelObject);
-      }
-
-      ModelObject = ModelObject with
-      {
-        DocNo = docNo,
-        EntryId = SessionManager.CurrentSession?.UserId
-      };
-
-      //3. 문서 Save 프로시저 호출
-      bool result = _doc.InsertDocument<DocumentModelForCRUD>(ModelObject);
-
-      return result ? (true, "문서 저장 성공!") : (false, "문서 저장 실패!");
-    }
-
-    /// <summary>
-    /// 문서 UPDATE 로직
-    /// </summary>
-    /// <param name="ModelObject"></param>
-    /// <returns></returns>
-    public (bool IsSuccess, string Message) UpdateDocument<T>(T ModelObject) where T : class
-    {
-      if (_doc.UpdateDocument<T>(ModelObject) <= 0)
-      {
-        return (false, "문서 수정 실패!");
-      }
-      else
-      {
-        return (true, "문서 수정 성공!");
+        bool isOk = await _doc.UpdateDocumentAsync(crudModel);
+        return isOk ? (true, "수정 성공") : (false, "수정 실패");
       }
     }
   }

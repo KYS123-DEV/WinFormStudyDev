@@ -5,11 +5,11 @@
   /// </summary>
   public record DocumentModelBase
   {
-    public string? DocNo { init; get; } = string.Empty;
-    public string? DocContent { init; get; } = string.Empty;
-    public string? DocDiv { init; get; } = string.Empty;
-    public string? DocFilenm { init; get; } = string.Empty;
-    public string? DocComment { init; get; } = string.Empty;
+    public string? DocNo { get; set; } = string.Empty;
+    public string? DocContent { get; set; } = string.Empty;
+    public string? DocDiv { get; set; } = string.Empty;
+    public string? DocFilenm { get; set; } = string.Empty;
+    public string? DocComment { get; set; } = string.Empty;
   }
 
   /// <summary>
@@ -17,11 +17,11 @@
   /// </summary>
   public record DocumentModelForCRUD : DocumentModelBase
   {
-    public string? DocTitle { init; get; } = string.Empty;
-    public string? EntryId { init; get; } = string.Empty;
-    public string? Entrydt { init; get; } = string.Empty;
-    public string? Updatedt { init; get; } = string.Empty;
-    public string? Enddt { init; get; } = string.Empty;
+    public string? DocTitle { get; set; } = string.Empty;
+    public string? EntryId { get; set; } = string.Empty;
+    public string? EntryDt { get; set; } = string.Empty;
+    public string? UpdateDt { get; set; } = string.Empty;
+    public string? EndDt { get; set; } = string.Empty;
   }
 
   /// <summary>
@@ -29,10 +29,10 @@
   /// </summary>
   public record DocumentModelForSearch : DocumentModelBase
   {
-    public string? DocDtDiv { init; get; } = string.Empty;
-    public string? Dt1 { init; get; } = string.Empty;
-    public string? Dt2 { init; get; } = string.Empty;
-    public string? DocContentDiv { init; get; } = string.Empty;
-    public string? DocSearchText { init; get; } = string.Empty;
+    public string? DocDtDiv { get; set; } = string.Empty;
+    public string? Dt1 { get; set; } = string.Empty;
+    public string? Dt2 { get; set; } = string.Empty;
+    public string? DocContentDiv { get; set; } = string.Empty;
+    public string? DocSearchText { get; set; } = string.Empty;
   }
 }

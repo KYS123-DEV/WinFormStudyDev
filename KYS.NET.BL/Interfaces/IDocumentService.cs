@@ -9,12 +9,11 @@ namespace KYS.NET.BL.Interfaces
 {
   public interface IDocumentService
   {
-    //문서 서비스에 필요한 채번 메서드
-    public string GenerateDocumentNumber();
-    (bool IsSuccess, string Message, List<TResult> SelectList) SelectDocument<TResult, TSearch>(TSearch ModelObject)
-      where TResult : class
+    string GenerateDocumentNumber();     //채번 로직
+    Task<(bool IsSuccess, string Message, List<TResult> SelectList)>
+      SelectDocumentAsync<TResult, TSearch>(TSearch ModelObject)
+      where TResult : class, new()
       where TSearch : class;
-    (bool IsSuccess, string Message) InsertDocument<T>(T ModelObject) where T : class;
-    (bool IsSuccess, string Message) UpdateDocument<T>(T ModelObject) where T : class;
+    Task<(bool IsSuccess, string Message)> SaveDocumentAsync<T>(T ModelObject) where T : class;
   }
 }

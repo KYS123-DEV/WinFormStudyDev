@@ -17,19 +17,15 @@ namespace KYS.NET.DATA.Repositories
     /// <returns></returns>
     public string GenerateDocumentNumber()
     {
-      using (SqlConnection conn = new(_connStr))
-      {
-        conn.Open();
-        using (SqlCommand cmd = new("dbo.usp_get_docno_i", conn))
-        {
-          //1. 프로시저로 설정 및 실행
-          cmd.CommandType = CommandType.StoredProcedure;
-          var docNo = cmd.ExecuteScalar();
+      using SqlConnection conn = new(_connStr);
+      conn.Open();
+      using SqlCommand cmd = new("dbo.usp_get_new_docno", conn);
 
-          //2. 결과 값 반환
-          return docNo?.ToString() ?? string.Empty;
-        }
-      }
+      //1. 프로시저로 설정 및 실행
+      cmd.CommandType = CommandType.StoredProcedure;
+
+      //2. 결과 값 반환
+      return cmd.ExecuteScalar().ToString() ?? string.Empty;
     }
 
     /// <summary>
@@ -37,48 +33,50 @@ namespace KYS.NET.DATA.Repositories
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="ModelObject"></param>
-    /// <returns></returns>
-    public List<TResult> SelectDocument<TResult, TSearch>(TSearch ModelObject)
-      where TResult : class
+    public async Task<List<TResult>> SelectDocumentAsync<TResult, TSearch>(TSearch ModelObject)
+      where TResult : class, new()
       where TSearch : class
     {
-      List<TResult> resultList = new List<TResult>();
-      var searchModel = ModelObject as DocumentModelForSearch;
+      var resultList = new List<TResult>();
+      var m = ModelObject as DocumentModelForSearch;
 
-      using (SqlConnection conn = new(_connStr))
+      using SqlConnection conn = new(_connStr);
+      await conn.OpenAsync();
+      using SqlCommand cmd = new("dbo.usp_get_doc_s", conn);
+      cmd.CommandType = CommandType.StoredProcedure;
+
+      cmd.Parameters.AddWithValue("@p_docdtdiv", m?.DocDtDiv);
+      cmd.Parameters.AddWithValue("@p_dt1", m?.Dt1);
+      cmd.Parameters.AddWithValue("@p_dt2", m?.Dt2);
+      cmd.Parameters.AddWithValue("@p_doccontentdiv", m?.DocContentDiv);
+      cmd.Parameters.AddWithValue("@p_docsearchtext", m?.DocSearchText);
+
+      using SqlDataReader sdr = await cmd.ExecuteReaderAsync();
+      var properties = typeof(TResult).GetProperties();
+
+      while (await sdr.ReadAsync())
       {
-        conn.Open();
-        using (SqlCommand cmd = new("dbo.usp_get_doc_s", conn))
+        var item = new TResult();
+        foreach (var prop in properties)
         {
-          cmd.Parameters.AddWithValue("@p_docdtdiv", searchModel?.DocDtDiv);
-          cmd.Parameters.AddWithValue("@p_dt1", searchModel?.Dt1);
-          cmd.Parameters.AddWithValue("@p_dt2", searchModel?.Dt2);
-          cmd.Parameters.AddWithValue("@p_doccontentdiv", searchModel?.DocContentDiv);
-          cmd.Parameters.AddWithValue("@p_docsearchtext", searchModel?.DocSearchText);
-
-          cmd.CommandType = CommandType.StoredProcedure;
-
-          using (SqlDataReader sdr = cmd.ExecuteReader())
+          try
           {
-            while (sdr.Read())
-            {
-              // 데이터 매핑 (DocumentModel 객체 생성)
-              var item = new DocumentModelForCRUD
-              {
-                DocNo = sdr["doc_no"]?.ToString(),
-                DocTitle = sdr["doc_title"]?.ToString(),
-                EntryId = sdr["entryid"]?.ToString(),
-                Entrydt = sdr["entrydt"]?.ToString(),
-                Enddt = sdr["enddt"]?.ToString()
-                // 추가 컬럼이 있다면 여기에 작성
-              };
-
-              resultList.Add(item as TResult);
-            }
+            int ordinal = sdr.GetOrdinal(prop.Name);
+            if (!sdr.IsDBNull(ordinal))
+              prop.SetValue(item, sdr.GetValue(ordinal));
           }
-
+          catch
+          {
+            continue;
+          }
         }
+        resultList.Add(item);
       }
+
+      //출력 확인 용
+      foreach (var item in resultList)
+        Console.Write("item : " + item);
+
       return resultList;
     }
 
@@ -88,52 +86,65 @@ namespace KYS.NET.DATA.Repositories
     /// <typeparam name="T"></typeparam>
     /// <param name="ModelObject"></param>
     /// <returns></returns>
-    public bool InsertDocument<T>(T ModelObject) where T : class
+    public async Task<bool> InsertDocumentAsync<T>(T ModelObject) where T : class
     {
-      using (SqlConnection conn = new(_connStr))
-      {
-        conn.Open();
-        using (SqlCommand cmd = new("dbo.usp_new_doc_iu", conn))
-        {
-          //플래그 값 설정 : 'i' - Insert
-          cmd.Parameters.AddWithValue("@p_flag", "i");
+      using SqlConnection conn = new(_connStr);
+      await conn.OpenAsync();
+      using SqlCommand cmd = new("dbo.usp_doc_iu", conn);
+      cmd.CommandType = CommandType.StoredProcedure;
 
-          //ModelObject 의 속성들을 파라미터로 추가 (Reflection 활용) 
-          /*foreach (var prop in ModelObject.GetType().GetProperties())
-          {
-            var value = prop.GetValue(ModelObject) ?? DBNull.Value;
-            cmd.Parameters.AddWithValue($"@p_{prop.Name.ToLower()}", value);
-          }*/
+      var m = ModelObject as DocumentModelForCRUD;
 
-          cmd.Parameters.AddWithValue("@p_docno", (ModelObject as DocumentModelForCRUD)?.DocNo);
-          cmd.Parameters.AddWithValue("@p_entryid", (ModelObject as DocumentModelForCRUD)?.EntryId);
-          cmd.Parameters.AddWithValue("@p_doctitle", (ModelObject as DocumentModelForCRUD)?.DocTitle);
-          cmd.Parameters.AddWithValue("@p_doccontent", (ModelObject as DocumentModelForCRUD)?.DocContent);
-          cmd.Parameters.AddWithValue("@p_docfilenm", (ModelObject as DocumentModelForCRUD)?.DocFilenm);
-          cmd.Parameters.AddWithValue("@p_docdiv", (ModelObject as DocumentModelForCRUD)?.DocDiv);
-          cmd.Parameters.AddWithValue("@p_doccomment", (ModelObject as DocumentModelForCRUD)?.DocComment);
-          cmd.Parameters.AddWithValue("@p_entrydt", (ModelObject as DocumentModelForCRUD)?.Entrydt);
-          cmd.Parameters.AddWithValue("@p_updatedt", (ModelObject as DocumentModelForCRUD)?.Updatedt);
-          cmd.Parameters.AddWithValue("@p_enddt", (ModelObject as DocumentModelForCRUD)?.Enddt);
+      //플래그 값 설정 : 'i' - Insert
+      cmd.Parameters.AddWithValue("@p_flag", "i");
+      cmd.Parameters.AddWithValue("@p_docno", m?.DocNo);
+      cmd.Parameters.AddWithValue("@p_entryid", m?.EntryId);
+      cmd.Parameters.AddWithValue("@p_doctitle", m?.DocTitle);
+      cmd.Parameters.AddWithValue("@p_doccontent", m?.DocContent);
+      cmd.Parameters.AddWithValue("@p_docfilenm", m?.DocFilenm);
+      cmd.Parameters.AddWithValue("@p_docdiv", m?.DocDiv);
+      cmd.Parameters.AddWithValue("@p_doccomment", m?.DocComment);
+      cmd.Parameters.AddWithValue("@p_entrydt", m?.EntryDt);
+      cmd.Parameters.AddWithValue("@p_updatedt", m?.UpdateDt);
+      cmd.Parameters.AddWithValue("@p_enddt", m?.EndDt);
 
-          //프로시저 실행
-          cmd.CommandType = CommandType.StoredProcedure;
-          var result = cmd.ExecuteScalar();
+      //프로시저 실행
+      cmd.CommandType = CommandType.StoredProcedure;
+      var result = await cmd.ExecuteScalarAsync();
 
-          return Convert.ToByte(result) > 0;
-        }
-      }
+      return Convert.ToByte(result) > 0;
     }
 
     /// <summary>
-    /// 기존 문서 Update Proc 호출
+    /// 문서 업데이트 구현 필요
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="ModelObject"></param>
     /// <returns></returns>
-    public int UpdateDocument<T>(T ModelObject) where T : class
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task<bool> UpdateDocumentAsync<T>(T ModelObject) where T : class
     {
-      throw new NotImplementedException();
+      using SqlConnection conn = new(_connStr);
+      await conn.OpenAsync();
+      using SqlCommand cmd = new("dbo.usp_doc_iu", conn);
+      cmd.CommandType = CommandType.StoredProcedure;
+
+      var m = ModelObject as DocumentModelForCRUD;
+
+      //플래그 값 설정 : 'u' - Update
+      cmd.Parameters.AddWithValue("@p_flag", "u");
+      cmd.Parameters.AddWithValue("@p_docno", m?.DocNo);
+      cmd.Parameters.AddWithValue("@p_doctitle", m?.DocTitle);
+      cmd.Parameters.AddWithValue("@p_doccontent", m?.DocContent);
+      cmd.Parameters.AddWithValue("@p_docfilenm", m?.DocFilenm);
+      cmd.Parameters.AddWithValue("@p_docdiv", m?.DocDiv);
+      cmd.Parameters.AddWithValue("@p_updatedt", m?.UpdateDt);
+
+      //프로시저 실행
+      cmd.CommandType = CommandType.StoredProcedure;
+      var result = await cmd.ExecuteScalarAsync();
+
+      return Convert.ToByte(result) > 0;
     }
   }
 }

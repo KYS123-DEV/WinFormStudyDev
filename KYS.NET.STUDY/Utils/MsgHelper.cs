@@ -22,5 +22,10 @@ namespace KYS.NET.STUDY.Utils
     {
       MessageBox.Show(message, "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
+
+    public static DialogResult ShowQuestion(string message)
+    {
+      return MessageBox.Show(message, "사용자알림", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+    }
   }
 }
