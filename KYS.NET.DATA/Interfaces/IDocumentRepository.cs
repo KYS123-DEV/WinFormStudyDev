@@ -14,5 +14,6 @@ namespace KYS.NET.DATA.Interfaces
       where TSearch : class;
     Task<bool> InsertDocumentAsync<T>(T ModelObject) where T : class;
     Task<bool> UpdateDocumentAsync<T>(T ModelObject) where T : class;
+    Task<bool> DeleteDocumentAsync(string val);
   }
 }

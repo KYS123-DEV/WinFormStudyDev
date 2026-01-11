@@ -81,5 +81,17 @@ namespace KYS.NET.BL.Services
         return isOk ? (true, "수정 성공") : (false, "수정 실패");
       }
     }
+
+    /// <summary>
+    /// 문서 삭제 로직
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="ModelObject"></param>
+    /// <returns></returns>
+    public async Task<(bool IsSuccess, string Message)> DeleteDocumentAsync(string val)
+    {
+      bool isOk = await _doc.DeleteDocumentAsync(val);
+      return isOk ? (true, "삭제 완료.") : (false, "삭제 실패");
+    }
   }
 }

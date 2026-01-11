@@ -1,11 +1,4 @@
-﻿using KYS.NET.MODELS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KYS.NET.BL.Interfaces
+﻿namespace KYS.NET.BL.Interfaces
 {
   public interface IDocumentService
   {
@@ -15,5 +8,6 @@ namespace KYS.NET.BL.Interfaces
       where TResult : class, new()
       where TSearch : class;
     Task<(bool IsSuccess, string Message)> SaveDocumentAsync<T>(T ModelObject) where T : class;
+    Task<(bool IsSuccess, string Message)> DeleteDocumentAsync(string val);
   }
 }

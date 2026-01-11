@@ -5,6 +5,7 @@ using KYS.NET.DATA.Common;
 using KYS.NET.MODELS;
 using KYS.NET.STUDY.Utils;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using System.Data.Common;
 
 namespace KYS.NET.STUDY.Forms.Approval
@@ -87,12 +88,12 @@ namespace KYS.NET.STUDY.Forms.Approval
       //저장하시겠습니까? 메시지 알림.
       if (MsgHelper.ShowQuestion("저장하시겠습니까?") == DialogResult.No)
         return;
-      
+
       try
       {
         DocumentModelForCRUD documentModel = new DocumentModelForCRUD
         {
-          DocNo = string.Empty,
+          DocNo = txtb_docno.Text.Trim(),
           EntryId = SessionManager.CurrentSession?.UserId,
           DocTitle = txtb_doctitle.Text,
           DocContent = txtb_doccontent.Text,
@@ -164,8 +165,12 @@ namespace KYS.NET.STUDY.Forms.Approval
         }
 
         //DataGridView에 결과 바인딩
+        Dgv_approval_InitGrid();
         result.SelectList.ToList().Where(item => item.GetType().Name.Equals(dgv_approval.Name));
         dgv_approval.DataSource = result.SelectList;
+
+        //조회 후 첫번째 행 선택되도록.
+        dgv_approval_InputSetting(0);
       }
       catch (Exception ex)
       {
@@ -184,16 +189,21 @@ namespace KYS.NET.STUDY.Forms.Approval
     private void Dgv_approval_InitGrid()
     {
       dgv_approval.Columns.Clear();
-      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocNo","DocNo","문서번호",120,true,true));
-      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocTitle","DocTitle","문서제목",200,true,true));
-      dgv_approval.Columns.Add(Dgv_approval_AddColumns("EntryDt","EntryDt","신청일자/접수일자",200,true,true));
+
+      dgv_approval.AllowUserToAddRows = false;
+      dgv_approval.RowHeadersVisible = false;
+      dgv_approval.AllowUserToResizeRows = false;
+
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocNo", "DocNo", "문서번호", 120, true, true));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocTitle", "DocTitle", "문서제목", 200, true, true));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("EntryDt", "EntryDt", "신청일자/접수일자", 200, true, true));
       dgv_approval.Columns.Add(Dgv_approval_AddColumns("EndDt", "EndDt", "완료일자", 200, true, true));
-      dgv_approval.Columns.Add(Dgv_approval_AddColumns("UpdateDt","UpdateDt","수정일자",0,true,false));
-      dgv_approval.Columns.Add(Dgv_approval_AddColumns("EntryId","EntryId","작성자",100,true,true));
-      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocContent","DocContent","문서내용",0,true,false));
-      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocComment", "DocComment", "관리자 답변",0,true,false));
-      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocFilenm","DocFilenm","첨부파일",0,true,false));
-      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocDiv","DocDiv","문서구분",0,true,false));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("UpdateDt", "UpdateDt", "수정일자", 0, true, false));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("EntryId", "EntryId", "작성자", 100, true, true));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocContent", "DocContent", "문서내용", 0, true, false));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocComment", "DocComment", "관리자 답변", 0, true, false));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocFilenm", "DocFilenm", "첨부파일", 0, true, false));
+      dgv_approval.Columns.Add(Dgv_approval_AddColumns("DocDiv", "DocDiv", "문서구분", 0, true, false));
     }
 
     //결재서 DataGridView에 기초 컬럼 setting.
@@ -210,6 +220,71 @@ namespace KYS.NET.STUDY.Forms.Approval
         ReadOnly = readOnly,
         Visible = visiblity
       };
+    }
+
+    /// <summary>
+    /// 왼쪽 조회 그리드의 행 클릭 할 때마다, 우측의 input란에 정보 setting
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void dgv_approval_InputSetting(int row)
+    {
+      DataGridViewRow dgvRow = dgv_approval.Rows[row];
+      txtb_docno.Text = dgvRow.Cells["DocNo"].Value.ToString();
+      txtb_enrolldt.Text = dgvRow.Cells["EntryDt"].Value.ToString();
+      cb_docdiv.SelectedValue = dgvRow.Cells["DocDiv"].Value.ToString();
+      txtb_doctitle.Text = dgvRow.Cells["DocTitle"].Value.ToString();
+      txtb_doccontent.Text = dgvRow.Cells["DocContent"].Value.ToString();
+      txtb_docfilenm.Text = dgvRow.Cells["DocFilenm"].Value.ToString();
+      txtb_updatedt.Text = dgvRow.Cells["UpdateDt"].Value.ToString();
+      txtb_comment.Text = dgvRow.Cells["DocComment"].Value.ToString();
+    }
+
+    private void dgv_approval_CellClick(object sender, DataGridViewCellEventArgs e)
+    {
+      if (e.RowIndex < 0) return;
+
+      int row = dgv_approval.Rows[e.RowIndex].Index;
+      dgv_approval_InputSetting(row);
+    }
+
+    /// <summary>
+    /// 자료 삭제
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void btn_delete_Click(object sender, EventArgs e)
+    {
+      string DocNo = txtb_docno.Text.Trim();
+      if (DocNo.Equals(""))
+      {
+        MsgHelper.ShowWarning("삭제할 문서를 선택해주세요.");
+        return;
+      }
+
+      //삭제 하시겠습니까?
+      if (!(MsgHelper.ShowQuestion($"문서번호 : {DocNo} \n삭제하시겠습니까?") == DialogResult.No))
+      {
+        try
+        {
+          // 결과 처리 작성하기.
+          (bool IsSuccess, string Message) result = await _doc.DeleteDocumentAsync(DocNo);
+
+          if (result.IsSuccess)
+          {
+            await RetrieveData();
+            MsgHelper.ShowInfo(result.Message);
+          }
+          else
+          {
+            MsgHelper.ShowWarning(result.Message);
+          }
+        }
+        catch(Exception ex)
+        {
+          MsgHelper.ShowError("[삭제 에러] : " + ex.Message);
+        }
+      }
     }
   }
 }

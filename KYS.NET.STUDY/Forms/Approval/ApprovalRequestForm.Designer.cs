@@ -134,6 +134,7 @@
       btn_delete.TabIndex = 0;
       btn_delete.Text = "삭제(X)";
       btn_delete.UseVisualStyleBackColor = true;
+      btn_delete.Click += btn_delete_Click;
       // 
       // btn_reset
       // 
@@ -452,6 +453,7 @@
       dgv_approval.RowHeadersWidth = 62;
       dgv_approval.Size = new Size(524, 883);
       dgv_approval.TabIndex = 31;
+      dgv_approval.CellClick += dgv_approval_CellClick;
       // 
       // ApprovalRequestForm
       // 

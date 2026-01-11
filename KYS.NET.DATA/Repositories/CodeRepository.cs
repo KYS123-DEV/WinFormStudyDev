@@ -52,6 +52,5 @@ namespace KYS.NET.DATA.Repositories
       }
       return items;
     }
-
   }
 }

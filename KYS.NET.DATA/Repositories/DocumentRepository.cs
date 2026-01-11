@@ -42,7 +42,7 @@ namespace KYS.NET.DATA.Repositories
 
       using SqlConnection conn = new(_connStr);
       await conn.OpenAsync();
-      using SqlCommand cmd = new("dbo.usp_get_doc_s", conn);
+      using SqlCommand cmd = new("dbo.usp_doc_s", conn);
       cmd.CommandType = CommandType.StoredProcedure;
 
       cmd.Parameters.AddWithValue("@p_docdtdiv", m?.DocDtDiv);
@@ -134,17 +134,42 @@ namespace KYS.NET.DATA.Repositories
       //플래그 값 설정 : 'u' - Update
       cmd.Parameters.AddWithValue("@p_flag", "u");
       cmd.Parameters.AddWithValue("@p_docno", m?.DocNo);
+      cmd.Parameters.AddWithValue("@p_entryid", m?.EntryId);
       cmd.Parameters.AddWithValue("@p_doctitle", m?.DocTitle);
       cmd.Parameters.AddWithValue("@p_doccontent", m?.DocContent);
       cmd.Parameters.AddWithValue("@p_docfilenm", m?.DocFilenm);
       cmd.Parameters.AddWithValue("@p_docdiv", m?.DocDiv);
+      cmd.Parameters.AddWithValue("@p_doccomment", m?.DocComment);
+      cmd.Parameters.AddWithValue("@p_entrydt", m?.EntryDt);
       cmd.Parameters.AddWithValue("@p_updatedt", m?.UpdateDt);
+      cmd.Parameters.AddWithValue("@p_enddt", m?.EndDt);
 
       //프로시저 실행
       cmd.CommandType = CommandType.StoredProcedure;
       var result = await cmd.ExecuteScalarAsync();
 
       return Convert.ToByte(result) > 0;
+    }
+
+    /// <summary>
+    /// 문서 삭제 로직
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="ModelObject"></param>
+    /// <returns></returns>
+    public async Task<bool> DeleteDocumentAsync(string val)
+    {
+      using SqlConnection conn = new(_connStr);
+      await conn.OpenAsync();
+      
+      string deleteQuery = "DELETE FROM sydoc01t WHERE doc_no = @doc_no ";
+      using SqlCommand cmd = new(deleteQuery, conn);
+      cmd.Parameters.Add(new SqlParameter("@doc_no", val));
+
+      //DELETE 실행.
+      int result = cmd.ExecuteNonQuery();
+
+      return result > 0 ? true : false;
     }
   }
 }
