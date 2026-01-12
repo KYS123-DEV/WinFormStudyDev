@@ -73,10 +73,6 @@ namespace KYS.NET.DATA.Repositories
         resultList.Add(item);
       }
 
-      //출력 확인 용
-      foreach (var item in resultList)
-        Console.Write("item : " + item);
-
       return resultList;
     }
 
@@ -170,6 +166,24 @@ namespace KYS.NET.DATA.Repositories
       int result = cmd.ExecuteNonQuery();
 
       return result > 0 ? true : false;
+    }
+
+    /// <summary>
+    /// 첨부파일 저장 로직
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="ModelObject"></param>
+    /// <returns></returns>
+    public async Task<bool> FileSaveAsync<T>(T ModelObject) where T : class
+    {
+      using SqlConnection conn = new (_connStr);
+      await conn.OpenAsync();
+      using SqlCommand cmd = new("dbo.usp_doc_iu", conn);
+      cmd.CommandType = CommandType.StoredProcedure;
+
+      var m = ModelObject as FileModel;
+
+      //수정 필요
     }
   }
 }

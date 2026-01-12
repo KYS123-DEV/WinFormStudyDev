@@ -380,12 +380,13 @@
       // 
       btn_fileupload.Cursor = Cursors.Hand;
       btn_fileupload.FlatAppearance.BorderSize = 2;
-      btn_fileupload.Location = new Point(1131, 923);
+      btn_fileupload.Location = new Point(1131, 924);
       btn_fileupload.Name = "btn_fileupload";
       btn_fileupload.Size = new Size(46, 33);
       btn_fileupload.TabIndex = 25;
       btn_fileupload.Text = "▲";
       btn_fileupload.UseVisualStyleBackColor = true;
+      btn_fileupload.Click += btn_fileupload_Click;
       // 
       // lbl_updatedt
       // 

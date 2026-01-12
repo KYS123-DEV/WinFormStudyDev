@@ -7,6 +7,12 @@ using KYS.NET.STUDY.Utils;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using System.Data.Common;
+using System.IO;
+using System.Security.Cryptography;
+using System.Windows.Forms;
+using static System.Net.WebRequestMethods;
+using System.IO;
+using File = System.IO.File;
 
 namespace KYS.NET.STUDY.Forms.Approval
 {
@@ -280,9 +286,57 @@ namespace KYS.NET.STUDY.Forms.Approval
             MsgHelper.ShowWarning(result.Message);
           }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
           MsgHelper.ShowError("[삭제 에러] : " + ex.Message);
+        }
+      }
+    }
+
+    /// <summary>
+    /// 첨부 파일 업로드를 하기 위한 처리
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void btn_fileupload_Click(object sender, EventArgs e)
+    {
+      if (string.IsNullOrEmpty(txtb_docno.Text))
+      {
+        MsgHelper.ShowWarning("문서를 먼저 생성 후 파일을 올리세요.");
+        return;
+      }
+
+      using (OpenFileDialog ofd = new())
+      {
+        ofd.InitialDirectory = "c:\\";
+        ofd.Filter = "All files (*.*)|*.*|txt files (*.txt)|*.txt|pdf files (*.pdf)|*.pdf";
+
+        if (ofd.ShowDialog() == DialogResult.OK)
+        {
+          string filePath = ofd.FileName;
+
+          try
+          {
+            byte[] fileBytes = await File.ReadAllBytesAsync(filePath);
+
+            //파일정보 가져오기
+            FileInfo fileInfo = new FileInfo(filePath);
+
+            FileModel fm = new FileModel(
+              txtb_docno.Text,
+              fileInfo.Name,
+              fileBytes,
+              fileInfo.Length,
+              SessionManager.CurrentSession.UserId
+              );
+
+            txtb_docfilenm.Text = fileInfo.Name;
+            await _doc.FileSaveAsync<FileModel>(fm);
+          }
+          catch (Exception ex)
+          {
+            MsgHelper.ShowWarning("[File Error] : " + ex.Message);
+          }
         }
       }
     }

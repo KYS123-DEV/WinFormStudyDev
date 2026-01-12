@@ -93,5 +93,17 @@ namespace KYS.NET.BL.Services
       bool isOk = await _doc.DeleteDocumentAsync(val);
       return isOk ? (true, "삭제 완료.") : (false, "삭제 실패");
     }
+
+    /// <summary>
+    /// 첨부 파일 저장 로직
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="ModelOjbect"></param>
+    /// <returns></returns>
+    public async Task<(bool IsValid, string Message)> FileSaveAsync<T>(T ModelOjbect)
+    {
+      bool isOk = await _doc.FileSaveAsync<FileModel>(ModelOjbect as FileModel);
+      return isOk ? (true, "파일 저장 성공.") : (false, "파일 저장 실패");
+    }
   }
 }

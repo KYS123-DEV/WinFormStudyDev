@@ -9,5 +9,6 @@
       where TSearch : class;
     Task<(bool IsSuccess, string Message)> SaveDocumentAsync<T>(T ModelObject) where T : class;
     Task<(bool IsSuccess, string Message)> DeleteDocumentAsync(string val);
+    Task<(bool IsValid, string Message)> FileSaveAsync<T>(T ModelOjbect);
   }
 }
