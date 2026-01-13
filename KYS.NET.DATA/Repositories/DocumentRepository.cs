@@ -178,12 +178,22 @@ namespace KYS.NET.DATA.Repositories
     {
       using SqlConnection conn = new (_connStr);
       await conn.OpenAsync();
-      using SqlCommand cmd = new("dbo.usp_doc_iu", conn);
-      cmd.CommandType = CommandType.StoredProcedure;
+      using SqlCommand cmd = new("dbo.usp_fileSave_iu", conn);
 
       var m = ModelObject as FileModel;
 
       //수정 필요
+      cmd.Parameters.Add(new SqlParameter("@p_filekey",m?.FileKey));
+      cmd.Parameters.Add(new SqlParameter("@p_filenm", m?.FileNm));
+      cmd.Parameters.Add(new SqlParameter("@p_filesize", m?.FileSize));
+      cmd.Parameters.Add(new SqlParameter("@p_filedata", m?.FileData));
+      cmd.Parameters.Add(new SqlParameter("@p_entryid", m?.EntryId));
+      cmd.Parameters.Add(new SqlParameter("@p_entrydt", m?.EntryDt));
+
+      cmd.CommandType = CommandType.StoredProcedure;
+      var result = await cmd.ExecuteScalarAsync();
+
+      return Convert.ToByte(result) > 0;
     }
   }
 }

@@ -1,17 +1,8 @@
 ﻿using KYS.NET.BL.Common;
 using KYS.NET.BL.Interfaces;
 using KYS.NET.BL.Services;
-using KYS.NET.DATA.Common;
 using KYS.NET.MODELS;
 using KYS.NET.STUDY.Utils;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic;
-using System.Data.Common;
-using System.IO;
-using System.Security.Cryptography;
-using System.Windows.Forms;
-using static System.Net.WebRequestMethods;
-using System.IO;
 using File = System.IO.File;
 
 namespace KYS.NET.STUDY.Forms.Approval
@@ -20,10 +11,37 @@ namespace KYS.NET.STUDY.Forms.Approval
   {
     private readonly IDocumentService _doc;
 
+    private bool _isDirty = false;    //상태 플래그 변수
+    private bool _isBinding = false;  //데이터 바인딩 중인지 확인하는 변수
+
     public ApprovalRequestForm()
     {
       InitializeComponent();
       _doc = new DocumentService();
+      AttachDirtyCheckEvents();
+    }
+
+    /// <summary>
+    /// 컨트롤의 TextChanged 이벤트에 MarkAsDirty 핸들러 등록
+    /// </summary>
+    private void AttachDirtyCheckEvents()
+    {
+      txtb_doctitle.TextChanged += MarkAsDirty;
+      txtb_doccontent.TextChanged += MarkAsDirty;
+      cb_docdiv.SelectedIndexChanged += MarkAsDirty;
+    }
+
+    /// <summary>
+    /// 컨트롤의 입력 값 변화가 있는지 Check하는 이벤트 핸들러
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void MarkAsDirty(object? sender, EventArgs e)
+    {
+      if (!_isBinding)
+      {
+        _isDirty = true;
+      }
     }
 
     /// <summary>
@@ -84,12 +102,21 @@ namespace KYS.NET.STUDY.Forms.Approval
     /// <param name="e"></param>
     private async void btn_save_Click(object sender, EventArgs e)
     {
+      if (!_isDirty)
+      {
+        MsgHelper.ShowWarning("변경 사항이 없습니다.");
+        return;
+      }
+
       //제목 AND 내용 작성되어 있지 않으면 return.
       if (string.IsNullOrEmpty(txtb_doctitle.Text) && string.IsNullOrEmpty(txtb_doccontent.Text))
       {
         MsgHelper.ShowWarning("제목 및 내용을 작성하세요.");
         return;
       }
+
+      //수정된 사항이 없으면 '변경 사항이 없습니다.' 사용자 알림.
+      
 
       //저장하시겠습니까? 메시지 알림.
       if (MsgHelper.ShowQuestion("저장하시겠습니까?") == DialogResult.No)
@@ -112,6 +139,7 @@ namespace KYS.NET.STUDY.Forms.Approval
 
         if (result.IsSuccess)
         {
+          _isDirty = false;
           await RetrieveData();
           MsgHelper.ShowInfo(result.Message);
         }
@@ -235,6 +263,8 @@ namespace KYS.NET.STUDY.Forms.Approval
     /// <param name="e"></param>
     private void dgv_approval_InputSetting(int row)
     {
+      _isBinding = true;
+
       DataGridViewRow dgvRow = dgv_approval.Rows[row];
       txtb_docno.Text = dgvRow.Cells["DocNo"].Value.ToString();
       txtb_enrolldt.Text = dgvRow.Cells["EntryDt"].Value.ToString();
@@ -244,6 +274,9 @@ namespace KYS.NET.STUDY.Forms.Approval
       txtb_docfilenm.Text = dgvRow.Cells["DocFilenm"].Value.ToString();
       txtb_updatedt.Text = dgvRow.Cells["UpdateDt"].Value.ToString();
       txtb_comment.Text = dgvRow.Cells["DocComment"].Value.ToString();
+
+      _isDirty = false;
+      _isBinding = false;
     }
 
     private void dgv_approval_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -331,11 +364,20 @@ namespace KYS.NET.STUDY.Forms.Approval
               );
 
             txtb_docfilenm.Text = fileInfo.Name;
-            await _doc.FileSaveAsync<FileModel>(fm);
+            var result = await _doc.FileSaveAsync<FileModel>(fm);
+
+            if (result.IsValid)
+            {
+              await RetrieveData();
+              MsgHelper.ShowInfo(result.Message);
+            } else
+            {
+              MsgHelper.ShowWarning(result.Message);
+            }
           }
           catch (Exception ex)
           {
-            MsgHelper.ShowWarning("[File Error] : " + ex.Message);
+            MsgHelper.ShowError("[File Error] : " + ex.Message);
           }
         }
       }

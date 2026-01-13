@@ -14,7 +14,7 @@ namespace KYS.NET.DATA.Common
   /// </summary>
   public class DBConnectionObject
   {
-    public static string? DBConnStr = GetConnstr();
+    public static readonly string? DBConnStr = GetConnstr();
 
     /// <summary>
     /// DB 접속 문자열 반환
