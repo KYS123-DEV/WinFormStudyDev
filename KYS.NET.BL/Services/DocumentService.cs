@@ -105,5 +105,15 @@ namespace KYS.NET.BL.Services
       bool isOk = await _doc.FileSaveAsync<FileModel>(ModelOjbect as FileModel);
       return isOk ? (true, "파일 저장 성공.") : (false, "파일 저장 실패");
     }
+
+    /// <summary>
+    /// 첨부 파일 다운로드 로직
+    /// </summary>
+    /// <returns></returns>
+    public async Task<(bool IsValid, string Message, byte[] filedata)> FileDownloadAsync(string filekey)
+    {
+      (bool isOk, byte[] fileBytes) = await _doc.FileDownloadAsync(filekey);
+      return isOk ? (true, "", fileBytes) : (false, "파일 불러오기 실패!", fileBytes);
+    }
   }
 }

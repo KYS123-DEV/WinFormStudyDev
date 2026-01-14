@@ -9,12 +9,17 @@ namespace KYS.NET.MODELS
   /// <summary>
   /// 첨부파일 DTO
   /// </summary>
-  public record FileModel
+  public record FileModelBase
   {
     public string? FileKey { get; init; }
+    public byte[]? FileData { get; init; } // DB의 varbinary(max)와 직접 매핑되는 타입
+  }
+
+  public record FileModel : FileModelBase
+  {
+    
     public string? FileNm { get; init; }
     public long? FileSize { get; init; }
-    public byte[]? FileData { get; init; }     // DB의 varbinary(max)와 직접 매핑되는 타입
     public string? EntryId { get; init; }
     public string? EntryDt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 

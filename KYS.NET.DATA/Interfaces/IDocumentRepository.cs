@@ -16,5 +16,6 @@ namespace KYS.NET.DATA.Interfaces
     Task<bool> UpdateDocumentAsync<T>(T ModelObject) where T : class;
     Task<bool> DeleteDocumentAsync(string val);
     Task<bool> FileSaveAsync<T>(T ModelObject) where T : class;
+    Task<(bool, byte[] fileBytes)> FileDownloadAsync(string filekey);
   }
 }

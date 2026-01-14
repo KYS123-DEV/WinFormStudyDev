@@ -62,6 +62,7 @@
       txtb_comment = new RichTextBox();
       txtb_docno = new TextBox();
       dgv_approval = new DataGridView();
+      btn_filedownload = new Button();
       gb_info.SuspendLayout();
       gb_utils.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)dgv_approval).BeginInit();
@@ -456,11 +457,24 @@
       dgv_approval.TabIndex = 31;
       dgv_approval.CellClick += dgv_approval_CellClick;
       // 
+      // btn_filedownload
+      // 
+      btn_filedownload.Cursor = Cursors.Hand;
+      btn_filedownload.FlatAppearance.BorderSize = 2;
+      btn_filedownload.Location = new Point(1182, 924);
+      btn_filedownload.Name = "btn_filedownload";
+      btn_filedownload.Size = new Size(46, 33);
+      btn_filedownload.TabIndex = 32;
+      btn_filedownload.Text = "▼";
+      btn_filedownload.UseVisualStyleBackColor = true;
+      btn_filedownload.Click += button1_Click;
+      // 
       // ApprovalRequestForm
       // 
       AutoScaleDimensions = new SizeF(10F, 25F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(1251, 1250);
+      Controls.Add(btn_filedownload);
       Controls.Add(dgv_approval);
       Controls.Add(txtb_docno);
       Controls.Add(txtb_comment);
@@ -536,5 +550,6 @@
     private RichTextBox txtb_comment;
     private TextBox txtb_docno;
     private DataGridView dgv_approval;
+    private Button btn_filedownload;
   }
 }

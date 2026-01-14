@@ -31,6 +31,21 @@ namespace KYS.NET.DATA.Common
         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
         .Build();
       return config.GetConnectionString("DBConnection_1");
+
+      /*      string currentPath = AppContext.BaseDirectory;
+            DirectoryInfo? directory = new DirectoryInfo(currentPath);
+            while (directory != null && !directory.GetFiles("*.sln").Any())
+            {
+              directory = directory.Parent;
+            }
+
+            string basePath = directory?.FullName ?? currentPath;
+            var config = new ConfigurationBuilder()
+                .SetBasePath(basePath) // 찾은 최상위 경로를 BasePath로 설정
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            return config.GetConnectionString("DBConnection_1");*/
     }
   }
 }

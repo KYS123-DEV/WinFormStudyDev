@@ -183,17 +183,36 @@ namespace KYS.NET.DATA.Repositories
       var m = ModelObject as FileModel;
 
       //수정 필요
-      cmd.Parameters.Add(new SqlParameter("@p_filekey",m?.FileKey));
-      cmd.Parameters.Add(new SqlParameter("@p_filenm", m?.FileNm));
-      cmd.Parameters.Add(new SqlParameter("@p_filesize", m?.FileSize));
-      cmd.Parameters.Add(new SqlParameter("@p_filedata", m?.FileData));
-      cmd.Parameters.Add(new SqlParameter("@p_entryid", m?.EntryId));
-      cmd.Parameters.Add(new SqlParameter("@p_entrydt", m?.EntryDt));
+      cmd.Parameters.AddWithValue("@p_filekey",m?.FileKey);
+      cmd.Parameters.AddWithValue("@p_filenm", m?.FileNm);
+      cmd.Parameters.AddWithValue("@p_filesize", m?.FileSize);
+      cmd.Parameters.AddWithValue("@p_filedata", m?.FileData);
+      cmd.Parameters.AddWithValue("@p_entryid", m?.EntryId);
+      cmd.Parameters.AddWithValue("@p_entrydt", m?.EntryDt);
 
       cmd.CommandType = CommandType.StoredProcedure;
       var result = await cmd.ExecuteScalarAsync();
 
       return Convert.ToByte(result) > 0;
+    }
+
+    public async Task<(bool, byte[] fileBytes)> FileDownloadAsync(string filekey)
+    {
+      using SqlConnection conn = new(_connStr);
+      await conn.OpenAsync();
+      string query = "SELECT filedata AS FileData FROM test_image..sydoc01t_ext WHERE filekey = @p_filekey";
+      SqlCommand cmd = new (query, conn);
+
+      cmd.Parameters.AddWithValue("@p_filekey", filekey);
+
+      var result = await cmd.ExecuteScalarAsync();
+      
+      if (result != null && result != DBNull.Value)
+      {
+        return (true, (byte[])result);
+      } else {
+        return (false, null);
+      }
     }
   }
 }

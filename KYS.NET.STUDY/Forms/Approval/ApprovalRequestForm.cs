@@ -3,7 +3,9 @@ using KYS.NET.BL.Interfaces;
 using KYS.NET.BL.Services;
 using KYS.NET.MODELS;
 using KYS.NET.STUDY.Utils;
+using System.Windows.Forms;
 using File = System.IO.File;
+using System.Diagnostics;
 
 namespace KYS.NET.STUDY.Forms.Approval
 {
@@ -116,7 +118,7 @@ namespace KYS.NET.STUDY.Forms.Approval
       }
 
       //수정된 사항이 없으면 '변경 사항이 없습니다.' 사용자 알림.
-      
+
 
       //저장하시겠습니까? 메시지 알림.
       if (MsgHelper.ShowQuestion("저장하시겠습니까?") == DialogResult.No)
@@ -370,7 +372,8 @@ namespace KYS.NET.STUDY.Forms.Approval
             {
               await RetrieveData();
               MsgHelper.ShowInfo(result.Message);
-            } else
+            }
+            else
             {
               MsgHelper.ShowWarning(result.Message);
             }
@@ -380,6 +383,48 @@ namespace KYS.NET.STUDY.Forms.Approval
             MsgHelper.ShowError("[File Error] : " + ex.Message);
           }
         }
+      }
+    }
+
+    /// <summary>
+    /// 첨부파일 다운로드 기능
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void button1_Click(object sender, EventArgs e)
+    {
+      //첨부파일이 없으면 return
+      if (txtb_docfilenm.Text.Length <= 0) return;
+
+      string filekey = txtb_docno.Text.Trim();
+
+      try
+      {
+        //첨부파일 데이터 가져오기
+        var result = await _doc.FileDownloadAsync(filekey);
+
+        //파일 Open + 결과 사용자 알림 
+        if (result.IsValid)
+        {
+          string tempPath = Path.Combine("C:\\Temp", txtb_docfilenm.Text);
+          await File.WriteAllBytesAsync(tempPath, result.filedata);
+
+          //파일 실행 (프로세스)
+          Process.Start(new ProcessStartInfo
+          {
+            FileName = tempPath,
+            UseShellExecute = true
+          });
+
+        }
+        else
+        {
+          MsgHelper.ShowWarning(result.Message);
+        }
+      }
+      catch (Exception ex)
+      {
+        MsgHelper.ShowWarning("[File Open Error]" + ex.Message);
       }
     }
   }
