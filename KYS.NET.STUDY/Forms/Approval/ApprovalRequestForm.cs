@@ -16,10 +16,11 @@ namespace KYS.NET.STUDY.Forms.Approval
     private bool _isDirty = false;    //상태 플래그 변수
     private bool _isBinding = false;  //데이터 바인딩 중인지 확인하는 변수
 
-    public ApprovalRequestForm()
+    public ApprovalRequestForm() : this(new DocumentService()) { }
+    public ApprovalRequestForm(IDocumentService doc)
     {
       InitializeComponent();
-      _doc = new DocumentService();
+      _doc = doc;
       AttachDirtyCheckEvents();
     }
 
