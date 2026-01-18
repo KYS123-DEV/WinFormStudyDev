@@ -3,7 +3,6 @@ using KYS.NET.BL.Interfaces;
 using KYS.NET.BL.Services;
 using KYS.NET.MODELS;
 using KYS.NET.STUDY.Utils;
-using System.Windows.Forms;
 using File = System.IO.File;
 using System.Diagnostics;
 
@@ -54,6 +53,9 @@ namespace KYS.NET.STUDY.Forms.Approval
     /// <param name="e"></param>
     private void ApprovalRequestForm_Load(object sender, EventArgs e)
     {
+      //로그인 접속 로그 기록
+      CallFileLooger.CallWriteLog("\'사용자 로그인 완료\'");
+
       //현재 달의 첫째 날 ~ 현재 달의 마지막 날로 설정
       dt_picker1.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
       dt_picker2.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
@@ -105,6 +107,14 @@ namespace KYS.NET.STUDY.Forms.Approval
     /// <param name="e"></param>
     private async void btn_save_Click(object sender, EventArgs e)
     {
+      // 현재 로그인한 사용자와 글 작성자가 동일하지 않으면 return
+      if (!CheckIsAuthority())
+      {
+        MsgHelper.ShowWarning("수정 권한이 없습니다.");
+        return;
+      }
+
+      //수정된 사항이 없으면 '변경 사항이 없습니다.' 사용자 알림.
       if (!_isDirty)
       {
         MsgHelper.ShowWarning("변경 사항이 없습니다.");
@@ -118,18 +128,17 @@ namespace KYS.NET.STUDY.Forms.Approval
         return;
       }
 
-      //수정된 사항이 없으면 '변경 사항이 없습니다.' 사용자 알림.
-
-
       //저장하시겠습니까? 메시지 알림.
       if (MsgHelper.ShowQuestion("저장하시겠습니까?") == DialogResult.No)
         return;
+
+      string docNo = txtb_docno.Text.Trim();
 
       try
       {
         DocumentModelForCRUD documentModel = new DocumentModelForCRUD
         {
-          DocNo = txtb_docno.Text.Trim(),
+          DocNo = docNo,
           EntryId = SessionManager.CurrentSession?.UserId,
           DocTitle = txtb_doctitle.Text,
           DocContent = txtb_doccontent.Text,
@@ -144,10 +153,12 @@ namespace KYS.NET.STUDY.Forms.Approval
         {
           _isDirty = false;
           await RetrieveData();
+          CallFileLooger.CallWriteLog($"\'문서 {docNo} 저장 완료\'");
           MsgHelper.ShowInfo(result.Message);
         }
         else
         {
+          CallFileLooger.CallWriteLog($"\'문서 {docNo} 저장 완료\'");
           MsgHelper.ShowWarning(result.Message);
         }
       }
@@ -277,11 +288,17 @@ namespace KYS.NET.STUDY.Forms.Approval
       txtb_docfilenm.Text = dgvRow.Cells["DocFilenm"].Value.ToString();
       txtb_updatedt.Text = dgvRow.Cells["UpdateDt"].Value.ToString();
       txtb_comment.Text = dgvRow.Cells["DocComment"].Value.ToString();
+      txtb_entryid.Text = dgvRow.Cells["EntryId"].Value.ToString();
 
       _isDirty = false;
       _isBinding = false;
     }
 
+    /// <summary>
+    /// 좌측 문서 화면 클릭 시, 행번호 획득.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void dgv_approval_CellClick(object sender, DataGridViewCellEventArgs e)
     {
       if (e.RowIndex < 0) return;
@@ -297,6 +314,13 @@ namespace KYS.NET.STUDY.Forms.Approval
     /// <param name="e"></param>
     private async void btn_delete_Click(object sender, EventArgs e)
     {
+      // 현재 로그인한 사용자와 글 작성자가 동일하지 않으면 return
+      if (!CheckIsAuthority())
+      {
+        MsgHelper.ShowWarning("수정 권한이 없습니다.");
+        return;
+      }
+
       string DocNo = txtb_docno.Text.Trim();
       if (DocNo.Equals(""))
       {
@@ -315,10 +339,12 @@ namespace KYS.NET.STUDY.Forms.Approval
           if (result.IsSuccess)
           {
             await RetrieveData();
+            CallFileLooger.CallWriteLog($"\'문서 {DocNo} 삭제 완료\'");
             MsgHelper.ShowInfo(result.Message);
           }
           else
           {
+            CallFileLooger.CallWriteLog($"\'문서 {DocNo} 삭제 실패\'");
             MsgHelper.ShowWarning(result.Message);
           }
         }
@@ -336,6 +362,13 @@ namespace KYS.NET.STUDY.Forms.Approval
     /// <param name="e"></param>
     private async void btn_fileupload_Click(object sender, EventArgs e)
     {
+      // 현재 로그인한 사용자와 글 작성자가 동일하지 않으면 return
+      if (!CheckIsAuthority())
+      {
+        MsgHelper.ShowWarning("수정 권한이 없습니다.");
+        return;
+      }
+
       if (string.IsNullOrEmpty(txtb_docno.Text))
       {
         MsgHelper.ShowWarning("문서를 먼저 생성 후 파일을 올리세요.");
@@ -372,10 +405,12 @@ namespace KYS.NET.STUDY.Forms.Approval
             if (result.IsValid)
             {
               await RetrieveData();
+              CallFileLooger.CallWriteLog($"\'파일 {txtb_docfilenm.Text} 업로드 완료\'");
               MsgHelper.ShowInfo(result.Message);
             }
             else
             {
+              CallFileLooger.CallWriteLog($"\'파일 {txtb_docfilenm.Text} 업로드 실패!\'");
               MsgHelper.ShowWarning(result.Message);
             }
           }
@@ -410,23 +445,54 @@ namespace KYS.NET.STUDY.Forms.Approval
           string tempPath = Path.Combine("C:\\Temp", txtb_docfilenm.Text);
           await File.WriteAllBytesAsync(tempPath, result.filedata);
 
-          //파일 실행 (프로세스)
+          //파일 Open (프로세스)
           Process.Start(new ProcessStartInfo
           {
             FileName = tempPath,
             UseShellExecute = true
           });
-
         }
         else
         {
           MsgHelper.ShowWarning(result.Message);
         }
       }
+      catch (IOException)
+      {
+        MsgHelper.ShowError("[File Open Error] : 파일이 열려있습니다.");
+      }
       catch (Exception ex)
       {
-        MsgHelper.ShowWarning("[File Open Error]" + ex.Message);
+        MsgHelper.ShowError($"[File Open Error] : {ex.Message}");
       }
+    }
+
+    /// <summary>
+    /// 새로운 문서 입력칸으로 초기화
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void btn_insert_Click(object sender, EventArgs e)
+    {
+      txtb_enrolldt.Text = "";
+      txtb_docno.Text = "";
+      cb_docdiv.SelectedIndex = 0;
+      txtb_doctitle.Text = "";
+      txtb_doccontent.Text = "";
+      txtb_docfilenm.Text = "";
+      txtb_updatedt.Text = "";
+      txtb_comment.Text = "";
+    }
+
+    /// <summary>
+    /// 현재 로그인한 사용자와 문서를 작성한 사용자가 같은지 확인
+    /// </summary>
+    /// <returns></returns>
+    private bool CheckIsAuthority()
+    {
+      if (txtb_entryid.Text.Trim().Equals("") || txtb_entryid.Text.Trim().Equals(SessionManager.CurrentSession?.UserId))
+        return true;
+      return false;
     }
   }
 }

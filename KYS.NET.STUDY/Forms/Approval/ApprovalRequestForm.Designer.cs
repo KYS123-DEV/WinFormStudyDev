@@ -34,7 +34,6 @@
       btn_insert = new Button();
       btn_save = new Button();
       btn_delete = new Button();
-      btn_reset = new Button();
       btn_retrieve = new Button();
       txtb_title1 = new TextBox();
       txtb_title2 = new TextBox();
@@ -63,6 +62,7 @@
       txtb_docno = new TextBox();
       dgv_approval = new DataGridView();
       btn_filedownload = new Button();
+      txtb_entryid = new TextBox();
       gb_info.SuspendLayout();
       gb_utils.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)dgv_approval).BeginInit();
@@ -114,6 +114,7 @@
       btn_insert.TabIndex = 0;
       btn_insert.Text = "입력(+)";
       btn_insert.UseVisualStyleBackColor = true;
+      btn_insert.Click += btn_insert_Click;
       // 
       // btn_save
       // 
@@ -136,16 +137,6 @@
       btn_delete.Text = "삭제(X)";
       btn_delete.UseVisualStyleBackColor = true;
       btn_delete.Click += btn_delete_Click;
-      // 
-      // btn_reset
-      // 
-      btn_reset.Font = new Font("맑은 고딕", 12F, FontStyle.Regular, GraphicsUnit.Point, 129);
-      btn_reset.Location = new Point(657, 18);
-      btn_reset.Name = "btn_reset";
-      btn_reset.Size = new Size(146, 45);
-      btn_reset.TabIndex = 0;
-      btn_reset.Text = "초기화";
-      btn_reset.UseVisualStyleBackColor = true;
       // 
       // btn_retrieve
       // 
@@ -213,7 +204,6 @@
       gb_utils.Controls.Add(btn_delete);
       gb_utils.Controls.Add(btn_insert);
       gb_utils.Controls.Add(btn_save);
-      gb_utils.Controls.Add(btn_reset);
       gb_utils.Controls.Add(btn_retrieve);
       gb_utils.Location = new Point(11, 90);
       gb_utils.Name = "gb_utils";
@@ -469,11 +459,21 @@
       btn_filedownload.UseVisualStyleBackColor = true;
       btn_filedownload.Click += button1_Click;
       // 
+      // txtb_entryid
+      // 
+      txtb_entryid.BackColor = SystemColors.WindowFrame;
+      txtb_entryid.Location = new Point(1131, 393);
+      txtb_entryid.Name = "txtb_entryid";
+      txtb_entryid.Size = new Size(102, 31);
+      txtb_entryid.TabIndex = 33;
+      txtb_entryid.Visible = false;
+      // 
       // ApprovalRequestForm
       // 
       AutoScaleDimensions = new SizeF(10F, 25F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(1251, 1250);
+      Controls.Add(txtb_entryid);
       Controls.Add(btn_filedownload);
       Controls.Add(dgv_approval);
       Controls.Add(txtb_docno);
@@ -522,7 +522,6 @@
     private Button btn_insert;
     private Button btn_save;
     private Button btn_delete;
-    private Button btn_reset;
     private Button btn_retrieve;
     private TextBox txtb_title1;
     private TextBox txtb_title2;
@@ -551,5 +550,6 @@
     private TextBox txtb_docno;
     private DataGridView dgv_approval;
     private Button btn_filedownload;
+    private TextBox txtb_entryid;
   }
 }

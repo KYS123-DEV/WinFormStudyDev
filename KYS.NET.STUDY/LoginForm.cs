@@ -10,10 +10,11 @@ namespace KYS.NET.STUDY
   public partial class LoginForm : Form
   {
     private readonly IUserService _user;
-    public LoginForm()
+    public LoginForm() : this(new UserService()) { }
+    public LoginForm(IUserService user)
     {
       InitializeComponent();
-      _user = new UserService();
+      _user = user;
     }
 
     /// <summary>
@@ -38,7 +39,7 @@ namespace KYS.NET.STUDY
             UserName = result.usernm!
           });
 
-          //메인 작업 폼 Open
+          //3. 메인 작업 폼 Open
           ApprovalRequestForm approvalForm = new();
           Close();
         }
