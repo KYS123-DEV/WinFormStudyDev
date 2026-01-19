@@ -490,9 +490,53 @@ namespace KYS.NET.STUDY.Forms.Approval
     /// <returns></returns>
     private bool CheckIsAuthority()
     {
-      if (txtb_entryid.Text.Trim().Equals("") || txtb_entryid.Text.Trim().Equals(SessionManager.CurrentSession?.UserId))
+      if (txtb_entryid.Text.Trim().Equals("") ||
+        txtb_entryid.Text.Trim().Equals(SessionManager.CurrentSession?.UserId))
         return true;
       return false;
+    }
+
+    /// <summary>
+    /// 키보드로 행을 조회할 때 필요한 로직
+    /// </summary>
+    /// <param name="row"></param>
+    private void Adjust_row_for_InputSetting(Keys e)
+    {
+      // 1. 데이터가 없으면 리턴
+      if (dgv_approval.CurrentRow == null || dgv_approval.RowCount <= 0) return;
+
+      int currentRowIndex = dgv_approval.CurrentRow.Index;
+      int targetRowIndex = -1;
+
+      // 2. 키 방향에 따른 타겟 행 인덱스 계산
+      if (e == Keys.Down)
+      {
+        // 마지막 행이 아니면 다음 행으로
+        if (currentRowIndex < dgv_approval.RowCount - 1)
+          targetRowIndex = currentRowIndex + 1;
+      }
+      else if (e == Keys.Up)
+      {
+        // 첫 번째 행이 아니면 이전 행으로
+        if (currentRowIndex > 0)
+          targetRowIndex = currentRowIndex - 1;
+      }
+
+      // 3. 타겟 행이 결정되었다면 입력란 세팅 호출
+      if (targetRowIndex != -1)
+      {
+        dgv_approval_InputSetting(targetRowIndex);
+      }
+    }
+
+    /// <summary>
+    /// 키보드 화살표 아래로 눌러서 자료 조회하기
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void dgv_approval_KeyDown(object sender, KeyEventArgs e)
+    {
+      Adjust_row_for_InputSetting(e.KeyCode);
     }
   }
 }
